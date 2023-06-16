@@ -1,0 +1,20 @@
+owner: milosmns
+startDate: 2023-01-01
+endDate: 2022-01-01
+teams:
+  - title: Stability Chapter
+    name: stability-chapter
+    codeRepositories:
+      - kssm
+      - code-stats
+    discussionRepositories:
+      - code-stats
+
+  - title: Instability Chapter
+    name: instability-chapter
+    codeRepositories:
+      - code-stats
+      - tema
+    discussionRepositories:
+      - code-stats
+      - kssm
