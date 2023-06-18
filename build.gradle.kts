@@ -37,6 +37,7 @@ kotlin {
     add(macosArm64())
     add(macosX64())
     add(linuxX64())
+    add(mingwX64())
   }.forEach {
     it.binaries {
       executable(Output.artifact) {
@@ -45,6 +46,7 @@ kotlin {
     }
   }
 
+  @Suppress("UNUSED_VARIABLE") // delegates are used to read property names
   sourceSets {
     // shared code for all targets
 
@@ -52,9 +54,14 @@ kotlin {
       dependencies {
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.+")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.+")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.+")
         implementation("io.ktor:ktor-client-core:2.3.+")
-        implementation("io.ktor:ktor-client-cio:2.3.+")
+        implementation("io.ktor:ktor-client-auth:2.3.+")
+        implementation("io.ktor:ktor-client-curl:2.3.+")
         implementation("io.ktor:ktor-client-logging:2.3.+")
+        implementation("io.ktor:ktor-client-serialization:2.3.+")
+        implementation("io.ktor:ktor-client-content-negotiation:2.3.+")
+        implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.+")
         implementation("com.squareup.okio:okio:3.+")
         implementation("net.mamoe.yamlkt:yamlkt:0.+")
       }
