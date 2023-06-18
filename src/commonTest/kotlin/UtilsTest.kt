@@ -1,17 +1,17 @@
-package models
-
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEmpty
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import models.Config
 import okio.Path.Companion.toPath
 import kotlin.test.Test
 
-class ConfigTest {
+class UtilsTest {
 
   @Test fun `getting last Monday works`() {
     val someWednesdayMillis = LocalDate(2023, Month.JUNE, 14)
@@ -61,6 +61,20 @@ class ConfigTest {
     )
 
     assertThat(result).isEqualTo(expected)
+  }
+
+  @Test fun `parallel map works`() = runBlocking {
+    val result = listOf(1, 2, 3).parallelMap { it * 2 }
+
+    assertThat(result).isEqualTo(listOf(2, 4, 6))
+  }
+
+  @Test fun `truncate middle works for long text`() {
+    assertThat("too long for display".cutMiddleTo10()).isEqualTo("too …splay")
+  }
+
+  @Test fun `truncate middle works for short text`() {
+    assertThat("123456789".cutMiddleTo10()).isEqualTo("123456789")
   }
 
 }
