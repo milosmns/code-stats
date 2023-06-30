@@ -1,0 +1,47 @@
+query GetDiscussionCommentsPage(
+    $owner: String!,
+    $repository: String!,
+    $number: Int!,
+    $afterCursor: String = null,
+    $pageSize: Int = 100,
+) {
+    repository(
+        owner: $owner,
+        name: $repository,
+    ) {
+        discussion(number: $number) {
+            commentsPage : comments(
+                after: $afterCursor,
+                before: null,
+                first: $pageSize,
+                last: null,
+            ) {
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
+                comments : nodes {
+                    id
+                    body
+                    commentAuthor : author {
+                        login
+                    }
+                    createdAt
+
+                    replyPage : replies(
+                        first: 100, # intentional limitation
+                    ) {
+                        replies : nodes {
+                            id
+                            body
+                            replyAuthor : author {
+                                login
+                            }
+                            createdAt
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

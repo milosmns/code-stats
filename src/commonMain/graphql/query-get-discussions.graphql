@@ -1,0 +1,36 @@
+query GetDiscussionsPage(
+    $owner: String!,
+    $repository: String!,
+    $afterCursor: String = null,
+    $pageSize: Int = 100,
+    $orderBy: DiscussionOrder!,
+) {
+    repository(
+        owner: $owner,
+        name: $repository,
+    ) {
+        discussionsPage : discussions(
+            after: $afterCursor,
+            before: null,
+            first: $pageSize,
+            last: null,
+            orderBy: $orderBy,
+        ) {
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+            discussions : nodes {
+                id
+                number
+                title
+                body
+                createdAt
+                closedAt
+                author {
+                    login
+                }
+            }
+        }
+    }
+}

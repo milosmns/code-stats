@@ -1,0 +1,22 @@
+query GetDiscussion(
+    $owner: String!,
+    $repository: String!,
+    $number: Int!,
+) {
+    repository(
+        owner: $owner,
+        name: $repository,
+    ) {
+        discussion(number: $number) {
+            id
+            number
+            title
+            body
+            createdAt
+            closedAt
+            author {
+                login
+            }
+        }
+    }
+}
