@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run (Mac/Native)" type="KonanRunConfiguration" factoryName="KonanApp" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true">
+    <executable TARGET="macos_x64" TARGET_NAME="macNative" EXECUTABLE_NAME="codestats" PROJECT_PREFIX="CodeStats:" IS_TEST="false">
+      <variant NAME="Debug" GRADLE_TASK=":linkCodestatsDebugExecutableMacNative" FILE="$PROJECT_DIR$/build/bin/macNative/codestatsDebugExecutable/codestats.kexe" WORKING_DIR="$PROJECT_DIR$" PROGRAM_PARAMS="">
+        <envs />
+      </variant>
+      <variant NAME="Release" GRADLE_TASK=":linkCodestatsReleaseExecutableMacNative" FILE="$PROJECT_DIR$/build/bin/macNative/codestatsReleaseExecutable/codestats.kexe" WORKING_DIR="$PROJECT_DIR$" PROGRAM_PARAMS="">
+        <envs />
+      </variant>
+    </executable>
+    <variant NAME="Debug" GRADLE_TASK=":linkCodestatsDebugExecutableMacNative" FILE="$PROJECT_DIR$/build/bin/macNative/codestatsDebugExecutable/codestats.kexe" WORKING_DIR="$PROJECT_DIR$" PROGRAM_PARAMS="">
+      <envs />
+    </variant>
+    <method v="2">
+      <option name="com.jetbrains.mpp.KonanBuildTask" enabled="true" />
+    </method>
+  </configuration>
+</component>
