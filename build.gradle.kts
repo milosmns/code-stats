@@ -1,8 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 
-// Kudos to JMFayard for figuring out lots of stuff in this file!
+// Kudos to JMFayard for figuring out lots of KMP stuff!
 
 plugins {
   application
@@ -13,68 +14,22 @@ plugins {
   id("org.jlleitschuh.gradle.ktlint") version "11.+"
 }
 
-application {
-  mainClass.set("MainKt")
+repositories {
+  mavenCentral()
 }
 
-object Output {
-  val group = getEnv("PROJECT_GROUP", default = "xyz.marinkovic.milos")
-  val artifact = getEnv("PROJECT_ARTIFACT", default = "codestats")
-  val version = getEnv("PROJECT_VERSION", default = "0.1.0")
-  val author = getEnv("PROJECT_AUTHOR", default = "milosmns")
-
-  fun getBinaryDir(targetName: String) = "/bin/$targetName/${artifact}ReleaseExecutable/"
-    .replace('/', File.separatorChar)
-
-  private fun getEnv(name: String, default: String) = System.getenv(name)
-    .takeIf { !it.isNullOrBlank() }
-    ?: default
+application {
+  mainClass.set("MainKt")
 }
 
 group = Output.group
 version = Output.version
 
-repositories {
-  mavenCentral()
-}
-
 kotlin {
-  val jvmTarget = jvm {
-    compilations.all {
-      kotlinOptions.jvmTarget = "1.8"
-      compilerOptions.configure {
-        jvmTarget.set(JvmTarget.JVM_1_8)
-      }
-    }
-    println("Configured Kotlin/Native target '$name'")
-  }
-  val jvmMainCompilation = jvmTarget.compilations.getByName<KotlinJvmCompilation>("main")
-
-  // set up Kotlin/Native targets
-  val hostOs = System.getProperty("os.name")
-  val isArm64 = System.getProperty("os.arch") == "arm64" || System.getProperty("os.arch") == "aarch64"
-  val macTargetName = "macNative"
-  val nativeTarget = when {
-    hostOs == "Mac OS X" && isArm64 -> macosArm64(macTargetName)
-    hostOs == "Mac OS X" && !isArm64 -> macosX64(macTargetName)
-    // future targets should go here
-    else -> null
-  }
-  nativeTarget?.let { target ->
-    target.binaries {
-      executable(Output.artifact) {
-        entryPoint = "main"
-      }
-    }
-    target.binaries.all {
-      binaryOptions["memoryModel"] = "experimental"
-    }
-    println("Configured Kotlin/Native target '${target.name}'")
-  }
+  val jvmTarget = Configurator.configureJvmTarget(this)
+  val nativeTarget = Configurator.configureNativeTarget(this)
 
   sourceSets {
-
-    // shared code for all targets
 
     val commonMain by getting {
       dependencies {
@@ -84,7 +39,6 @@ kotlin {
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.+")
         implementation("io.ktor:ktor-client-core:2.3.+")
         implementation("io.ktor:ktor-client-auth:2.3.+")
-        implementation("io.ktor:ktor-client-cio:2.3.+")
         implementation("io.ktor:ktor-client-logging:2.3.+")
         implementation("io.ktor:ktor-client-serialization:2.3.+")
         implementation("io.ktor:ktor-client-content-negotiation:2.3.+")
@@ -105,13 +59,12 @@ kotlin {
       }
     }
 
-    // cross-platform targets
-
     val jvmMain by getting {
       dependsOn(commonMain)
       dependencies {
         implementation(kotlin("stdlib-jdk8"))
         implementation("org.slf4j:slf4j-simple:2.+")
+        implementation("io.ktor:ktor-client-cio:2.3.+")
       }
     }
 
@@ -121,10 +74,11 @@ kotlin {
       dependsOn(jvmMain)
     }
 
-    // native targets
-
     val macNativeMain by getting {
       dependsOn(commonMain)
+      dependencies {
+        implementation("io.ktor:ktor-client-curl:2.3.+")
+      }
     }
 
     @Suppress("UNUSED_VARIABLE") // used by the 'getting' delegate
@@ -135,8 +89,13 @@ kotlin {
 
   }
 
+  tasks.withType<Test> {
+    useJUnitPlatform()
+  }
+
   // make the JVM 'run' task work
   tasks.withType<JavaExec> {
+    val jvmMainCompilation = jvmTarget.compilations.getByName<KotlinJvmCompilation>("main")
     classpath(
       files(
         jvmMainCompilation.runtimeDependencyFiles,
@@ -145,40 +104,52 @@ kotlin {
     )
   }
 
+  // make the JVM 'jar' task work
   tasks.withType<ShadowJar> {
     archiveBaseName.set(Output.artifact)
     archiveClassifier.set("")
     archiveVersion.set("")
 
+    val jvmMainCompilation = jvmTarget.compilations.getByName<KotlinJvmCompilation>("main")
     from(jvmMainCompilation.output)
+
     configurations = mutableListOf(
       jvmMainCompilation.compileDependencyFiles,
       jvmMainCompilation.runtimeDependencyFiles,
     )
   }
 
-  tasks.withType<Test> {
-    useJUnitPlatform()
-  }
-
-  // TODO broken, needs fixing (target name is already lowercase)
-  // Task with path 'runDebugExecutablemacNative' not found in root project 'CodeStats'
   tasks.register<Copy>("install") {
-    group = "run"
+    group = "application"
     description = "Build the native executable and install it"
-    val destDir = "/usr/local/bin"
-    if (nativeTarget == null) throw GradleException("No native target configured")
-    val nativeTargetName = nativeTarget.name
-    dependsOn("runDebugExecutable$nativeTargetName")
-    val targetCamelCase = nativeTargetName.first().lowercaseChar() + nativeTargetName.substring(1)
-    val folder = "build/bin/$targetCamelCase/debugExecutable"
-    from(folder) {
-      include("${Output.artifact}.kexe")
-      rename { Output.artifact }
-    }
-    into(destDir)
-    doLast {
-      println("$ cp $folder/${Output.artifact}.kexe $destDir/$Output.artifact")
+    val installDir = Output.getInstallDir()
+    val artifactName = Output.artifact
+
+    if (nativeTarget == null) {
+      // JVM: copy the file to the root directory
+      dependsOn("shadowJar")
+      val jarDir = Output.getJarDir()
+      from(jarDir) {
+        include("$artifactName.jar")
+      }
+      into(installDir)
+
+      doLast {
+        println("Copied $jarDir/$artifactName.jar to $installDir/$artifactName.jar")
+      }
+    } else {
+      // Native: copy the file to the programs directory
+      dependsOn("${nativeTarget.name}Binaries")
+      val binaryDir = Output.getBinaryDir(nativeTarget.name)
+      from(binaryDir) {
+        include("$artifactName.kexe")
+        rename { artifactName }
+      }
+      into(installDir)
+
+      doLast {
+        println("Copied $binaryDir/$artifactName.kexe to $installDir/$artifactName")
+      }
     }
   }
 
@@ -205,3 +176,83 @@ apollo {
     }
   }
 }
+
+// region Utils
+
+object OS {
+  enum class Platform(val targetName: String) { JVM("jvm"), MAC("macNative") }
+  enum class Arch { X86, ARM }
+
+  val currentPlatform = when {
+    prop("os.name") == "Mac OS X" -> Platform.MAC
+    else -> Platform.JVM
+  }
+
+  val currentArch = when {
+    prop("os.arch") in setOf("arm64", "aarch64") -> Arch.ARM
+    else -> Arch.X86
+  }
+
+  fun prop(name: String, default: String = "") = System.getProperty(name)
+    .takeIf { !it.isNullOrBlank() }
+    ?: default
+
+  fun env(name: String, default: String) = System.getenv(name)
+    .takeIf { !it.isNullOrBlank() }
+    ?: default
+}
+
+object Output {
+  val group = OS.env("PROJECT_GROUP", default = "xyz.marinkovic.milos")
+  val artifact = OS.env("PROJECT_ARTIFACT", default = "codestats")
+  val version = OS.env("PROJECT_VERSION", default = "0.1.0")
+  val author = OS.env("PROJECT_AUTHOR", default = "milosmns")
+
+  fun getInstallDir() = when (OS.currentPlatform) {
+    OS.Platform.MAC -> "/usr/local/bin"
+    else -> OS.prop("user.dir")
+  }.replace('/', File.separatorChar)
+
+  fun getJarDir() = "build/libs"
+    .replace('/', File.separatorChar)
+
+  fun getBinaryDir(targetName: String) = "build/bin/$targetName/${artifact}ReleaseExecutable"
+    .replace('/', File.separatorChar)
+}
+
+object Configurator {
+
+  fun configureJvmTarget(container: KotlinTargetContainerWithPresetFunctions) =
+    container.jvm(OS.Platform.JVM.targetName) {
+      compilations.all {
+        kotlinOptions.jvmTarget = "1.8"
+        compilerOptions.configure {
+          jvmTarget.set(JvmTarget.JVM_1_8)
+        }
+      }
+      println("Configured Kotlin/Native target '$name'")
+    }
+
+  fun configureNativeTarget(container: KotlinTargetContainerWithPresetFunctions) =
+    when (OS.currentPlatform) {
+      OS.Platform.MAC -> when (OS.currentArch) {
+        OS.Arch.X86 -> container.macosX64(OS.currentPlatform.targetName)
+        OS.Arch.ARM -> container.macosArm64(OS.currentPlatform.targetName)
+      }
+
+      else -> null
+    }?.also { target ->
+      target.binaries {
+        executable(Output.artifact) {
+          entryPoint = "main"
+        }
+      }
+      target.binaries.all {
+        binaryOptions["memoryModel"] = "experimental"
+      }
+      println("Configured Kotlin/Native target '${target.name}'")
+    }
+
+}
+
+// endregion
