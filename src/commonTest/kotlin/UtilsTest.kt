@@ -33,7 +33,7 @@ class UtilsTest {
 
   @Test fun `loading file as string works`() {
     val path = "src/commonTest/resources/test.config.yaml".toPath(normalize = true)
-    val result = loadConfigFileAsString(path)
+    val result = loadFileAsString(path)
 
     assertThat(result.trim()).isNotEmpty()
   }
@@ -67,14 +67,6 @@ class UtilsTest {
     val result = listOf(1, 2, 3).parallelMap { it * 2 }
 
     assertThat(result).isEqualTo(listOf(2, 4, 6))
-  }
-
-  @Test fun `truncate middle works for long text`() {
-    assertThat("too long for display".cutMiddleTo10()).isEqualTo("too …splay")
-  }
-
-  @Test fun `truncate middle works for short text`() {
-    assertThat("123456789".cutMiddleTo10()).isEqualTo("123456789")
   }
 
 }

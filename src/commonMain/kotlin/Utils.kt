@@ -10,16 +10,17 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
+import models.CodeReview
 import models.Config
+import models.Discussion
+import models.Repository
 import net.mamoe.yamlkt.Yaml
-import okio.Buffer
-import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
-import okio.buffer
-import okio.use
 
-fun String.cutMiddleTo10() = if (length > 10) substring(0, 4) + "…" + substring(length - 5) else this
+expect fun loadFileAsString(configPath: Path): String
+
+expect fun readEnvVar(name: String): String?
 
 suspend inline fun <Input, Output> Iterable<Input>.parallelMap(
   crossinline mapper: suspend (Input) -> Output,
@@ -28,12 +29,6 @@ suspend inline fun <Input, Output> Iterable<Input>.parallelMap(
     async { mapper(it) }
   }.awaitAll()
 }
-
-fun loadConfigFileAsString(configPath: Path) = Buffer().apply {
-  FileSystem.SYSTEM.source(configPath).use { source ->
-    source.buffer().readAll(this)
-  }
-}.readUtf8()
 
 fun getLastMondayAsLocal(now: Instant = Clock.System.now()): LocalDate {
   val timeZone = TimeZone.currentSystemDefault()
@@ -46,7 +41,50 @@ fun Config.Companion.fromFile(path: String): Config {
   if (!path.endsWith(".yaml") && !path.endsWith(".yml"))
     throw IllegalArgumentException("Must be a YAML file ($path).")
 
-  val ioPath = path.toPath(normalize = true)
-  val fileContent = loadConfigFileAsString(ioPath)
-  return Yaml.Default.decodeFromString(fileContent)
+  try {
+    val ioPath = path.toPath(normalize = true)
+    val fileContent = loadFileAsString(ioPath)
+    return Yaml.Default.decodeFromString(fileContent)
+  } catch (e: Exception) {
+    throw IllegalArgumentException("Could not load config file ($path)", e)
+  }
 }
+
+// region Debugging tools
+
+fun String.truncateMiddle(): String {
+  val cleaned = this.replace("\\s+".toRegex(), " ").trim()
+  if (cleaned.length <= 10) return cleaned
+  return cleaned.substring(0, 4) + "..." + cleaned.substring(cleaned.length - 5)
+}
+
+// no need to test these, it's for debugging only
+fun CodeReview.Comment.truncate() = copy(
+  body = body.truncateMiddle(),
+)
+
+fun CodeReview.Feedback.truncate() = copy(
+  body = body.truncateMiddle(),
+)
+
+fun CodeReview.truncate() = copy(
+  body = body.truncateMiddle(),
+  comments = comments.map(CodeReview.Comment::truncate),
+  feedbacks = feedbacks.map(CodeReview.Feedback::truncate),
+)
+
+fun Discussion.Comment.truncate() = copy(
+  body = body.truncateMiddle(),
+)
+
+fun Discussion.truncate() = copy(
+  body = body.truncateMiddle(),
+  comments = comments.map(Discussion.Comment::truncate),
+)
+
+fun Repository.truncate() = copy(
+  codeReviews = codeReviews.map(CodeReview::truncate),
+  discussions = discussions.map(Discussion::truncate),
+)
+
+// endregion

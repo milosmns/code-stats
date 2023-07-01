@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class Repository(
   val owner: String,
   val name: String,
-  val mergeRequests: List<MergeRequest> = emptyList(),
-  val discussions: List<Discussion> = emptyList(),
+  val codeReviews: List<CodeReview>,
+  val discussions: List<Discussion>,
 )
