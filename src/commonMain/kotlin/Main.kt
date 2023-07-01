@@ -3,32 +3,33 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import models.Config
+import models.TeamHistoryConfig
 import vcs.TeamHistory
 
 @OptIn(ExperimentalSerializationApi::class)
-fun main() = try {
+fun main() = runBlocking {
   println("\n== Code Stats CLI ==\n")
 
   println("Loading configuration...")
-  val config = Config.fromFile("src/commonMain/resources/sample.config.yaml")
+  val teamHistoryConfig = TeamHistoryConfig.fromFile("src/commonMain/resources/sample.config.yaml")
+  println("Configuration loaded. $teamHistoryConfig")
 
   println("Loading team history...")
-  val history: TeamHistory = GitHubHistory(config)
+  val history: TeamHistory = GitHubHistory(teamHistoryConfig)
 
-  runBlocking {
-    val chosenRepo = config.teams.first().discussionRepositories.first()
-    val fullRepo = history.fetchRepository(chosenRepo)
-    val truncated = fullRepo.truncate()
-    val json = Json {
+  try {
+    val chosenRepo = teamHistoryConfig.teams.first().discussionRepositories.first()
+    val fullRepo = history.fetchRepository(chosenRepo, includeCodeReviews = true, includeDiscussions = true)
+    val serializer = Json {
       prettyPrint = true
       encodeDefaults = true
       prettyPrintIndent = "  "
     }
-    println(json.encodeToString(truncated))
+    println(serializer.encodeToString(fullRepo.truncate()))
+  } catch (e: Throwable) {
+    println("Error: ${e.message}")
+    e.printStackTrace()
+  } finally {
+    history.close()
   }
-  history.clean()
-} catch (e: Throwable) {
-  println("Error: ${e.message}")
-  e.printStackTrace()
 }

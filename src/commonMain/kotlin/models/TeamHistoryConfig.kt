@@ -7,7 +7,7 @@ import kotlinx.datetime.minus
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Config(
+data class TeamHistoryConfig(
   val owner: String,
   val startDate: LocalDate = getLastMondayAsLocal(),
   val endDate: LocalDate = startDate.minus(7, DateTimeUnit.DAY),

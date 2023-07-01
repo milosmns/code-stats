@@ -10,10 +10,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
-import models.CodeReview
-import models.Config
-import models.Discussion
-import models.Repository
+import models.TeamHistoryConfig
 import net.mamoe.yamlkt.Yaml
 import okio.Path
 import okio.Path.Companion.toPath
@@ -37,7 +34,7 @@ fun getLastMondayAsLocal(now: Instant = Clock.System.now()): LocalDate {
   return today.minus(daysSinceMonday, DateTimeUnit.DAY)
 }
 
-fun Config.Companion.fromFile(path: String): Config {
+fun TeamHistoryConfig.Companion.fromFile(path: String): TeamHistoryConfig {
   if (!path.endsWith(".yaml") && !path.endsWith(".yml"))
     throw IllegalArgumentException("Must be a YAML file ($path).")
 
@@ -49,42 +46,3 @@ fun Config.Companion.fromFile(path: String): Config {
     throw IllegalArgumentException("Could not load config file ($path)", e)
   }
 }
-
-// region Debugging tools
-
-fun String.truncateMiddle(): String {
-  val cleaned = this.replace("\\s+".toRegex(), " ").trim()
-  if (cleaned.length <= 10) return cleaned
-  return cleaned.substring(0, 4) + "..." + cleaned.substring(cleaned.length - 5)
-}
-
-// no need to test these, it's for debugging only
-fun CodeReview.Comment.truncate() = copy(
-  body = body.truncateMiddle(),
-)
-
-fun CodeReview.Feedback.truncate() = copy(
-  body = body.truncateMiddle(),
-)
-
-fun CodeReview.truncate() = copy(
-  body = body.truncateMiddle(),
-  comments = comments.map(CodeReview.Comment::truncate),
-  feedbacks = feedbacks.map(CodeReview.Feedback::truncate),
-)
-
-fun Discussion.Comment.truncate() = copy(
-  body = body.truncateMiddle(),
-)
-
-fun Discussion.truncate() = copy(
-  body = body.truncateMiddle(),
-  comments = comments.map(Discussion.Comment::truncate),
-)
-
-fun Repository.truncate() = copy(
-  codeReviews = codeReviews.map(CodeReview::truncate),
-  discussions = discussions.map(Discussion::truncate),
-)
-
-// endregion

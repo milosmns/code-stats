@@ -1,13 +1,14 @@
 package vcs
 
 import models.CodeReview
-import models.Config
 import models.Discussion
 import models.Repository
+import models.TeamHistoryConfig
+import okio.Closeable
 
-interface TeamHistory {
+interface TeamHistory : Closeable {
 
-  val config: Config
+  val teamHistoryConfig: TeamHistoryConfig
 
   suspend fun fetchCodeReview(repository: String, number: Int): CodeReview
 
@@ -19,10 +20,8 @@ interface TeamHistory {
 
   suspend fun fetchRepository(
     repository: String,
-    excludeCodeReviews: Boolean = false,
-    excludeDiscussions: Boolean = false,
+    includeCodeReviews: Boolean,
+    includeDiscussions: Boolean,
   ): Repository
-
-  fun clean()
 
 }
