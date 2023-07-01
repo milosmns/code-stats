@@ -10,6 +10,7 @@ plugins {
   kotlin("plugin.serialization") version "1.8.+"
   id("com.apollographql.apollo3") version "4.+"
   id("com.github.johnrengelman.shadow") version "8.+"
+  id("org.jlleitschuh.gradle.ktlint") version "11.+"
 }
 
 application {
@@ -181,6 +182,17 @@ kotlin {
     }
   }
 
+}
+
+ktlint {
+  verbose.set(true)
+  outputToConsole.set(true)
+  enableExperimentalRules.set(true)
+
+  filter {
+    exclude { projectDir.toURI().relativize(it.file.toURI()).path.contains("/sqldelight/") }
+    exclude { projectDir.toURI().relativize(it.file.toURI()).path.contains("/generated/") }
+  }
 }
 
 apollo {
