@@ -41,7 +41,7 @@ data class GitHubPullRequest(
 
   @Serializable
   data class Comment(
-    val id: Int,
+    val id: Long,
     val body: String = "",
     @SerialName("user") val author: GitHubUser,
     @SerialName("created_at") val createdAtInstant: Instant,
@@ -86,7 +86,7 @@ data class GitHubPullRequest(
 
   @Serializable
   data class Review(
-    val id: Int,
+    val id: Long,
     val body: String = "",
     val state: State,
     @SerialName("user") val author: GitHubUser,

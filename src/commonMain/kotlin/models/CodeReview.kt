@@ -27,7 +27,7 @@ data class CodeReview(
 
   @Serializable
   data class Comment(
-    val id: Int,
+    val id: Long,
     val body: String,
     val author: User,
     val createdAt: LocalDateTime,
@@ -49,7 +49,7 @@ data class CodeReview(
 
   @Serializable
   data class Feedback(
-    val id: Int,
+    val id: Long,
     val body: String,
     val state: State,
     val author: User,
