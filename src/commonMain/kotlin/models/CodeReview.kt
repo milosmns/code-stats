@@ -10,7 +10,6 @@ data class CodeReview(
   val state: State,
   val title: String,
   val body: String,
-  val length: Int = body.length,
   val author: User,
   val requestedReviewers: List<User>,
   val isDraft: Boolean,
@@ -30,7 +29,6 @@ data class CodeReview(
   data class Comment(
     val id: Int,
     val body: String,
-    val length: Int = body.length,
     val author: User,
     val createdAt: LocalDateTime,
   )
@@ -53,7 +51,6 @@ data class CodeReview(
   data class Feedback(
     val id: Int,
     val body: String,
-    val length: Int = body.length,
     val state: State,
     val author: User,
     val submittedAt: LocalDateTime?,

@@ -1,5 +1,9 @@
 package github.mapping
 
+import models.CodeReview as GenericCodeReview
+import models.Discussion as GenericDiscussion
+import models.Repository as GenericRepository
+import models.User as GenericUser
 import github.models.GitHubDiscussion
 import github.models.GitHubPullRequest
 import github.models.GitHubPullRequest.File
@@ -8,10 +12,6 @@ import github.models.GitHubRepository
 import github.models.GitHubUser
 import models.CodeReview.Changes
 import models.CodeReview.Feedback
-import models.CodeReview as GenericCodeReview
-import models.Discussion as GenericDiscussion
-import models.Repository as GenericRepository
-import models.User as GenericUser
 
 fun GitHubUser.toGeneric(): GenericUser =
   GenericUser(
@@ -22,7 +22,6 @@ fun GitHubDiscussion.Comment.toGeneric(): GenericDiscussion.Comment =
   GenericDiscussion.Comment(
     id = id,
     body = body,
-    length = length,
     createdAt = createdAt,
     author = author.toGeneric(),
   )
@@ -33,7 +32,6 @@ fun GitHubDiscussion.toGeneric(): GenericDiscussion =
     number = number,
     title = title,
     body = body,
-    length = length,
     author = author.toGeneric(),
     createdAt = createdAt,
     closedAt = closedAt,
@@ -79,7 +77,6 @@ fun Review.toGeneric(): Feedback =
   Feedback(
     id = id,
     body = body,
-    length = length,
     state = state.toGeneric(),
     author = author.toGeneric(),
     submittedAt = submittedAt,
@@ -89,7 +86,6 @@ fun GitHubPullRequest.Comment.toGeneric(): GenericCodeReview.Comment =
   GenericCodeReview.Comment(
     id = id,
     body = body,
-    length = length,
     createdAt = createdAt,
     author = author.toGeneric(),
   )
@@ -101,7 +97,6 @@ fun GitHubPullRequest.toGeneric(): GenericCodeReview =
     state = state.toGeneric(),
     title = title,
     body = body,
-    length = length,
     author = author.toGeneric(),
     requestedReviewers = requestedReviewers.map(GitHubUser::toGeneric),
     isDraft = isDraft,

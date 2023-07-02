@@ -14,7 +14,6 @@ data class GitHubPullRequest(
   val state: State,
   val title: String,
   val body: String = "",
-  val length: Int = body.length,
   @SerialName("user") val author: GitHubUser,
   @SerialName("requested_reviewers") val requestedReviewers: List<GitHubUser> = emptyList(),
   @SerialName("draft") val isDraft: Boolean,
@@ -43,8 +42,7 @@ data class GitHubPullRequest(
   @Serializable
   data class Comment(
     val id: Int,
-    val body: String,
-    val length: Int = body.length,
+    val body: String = "",
     @SerialName("user") val author: GitHubUser,
     @SerialName("created_at") val createdAtInstant: Instant,
     val createdAt: LocalDateTime = createdAtInstant.toLocalDateTime(TimeZone.UTC),
@@ -90,7 +88,6 @@ data class GitHubPullRequest(
   data class Review(
     val id: Int,
     val body: String = "",
-    val length: Int = body.length,
     val state: State,
     @SerialName("user") val author: GitHubUser,
     @SerialName("submitted_at") val submittedAtInstant: Instant? = null,

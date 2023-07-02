@@ -9,7 +9,6 @@ data class Discussion(
   val number: Int,
   val title: String,
   val body: String,
-  val length: Int = body.length,
   val createdAt: LocalDateTime,
   val closedAt: LocalDateTime?,
   val comments: List<Comment>,
@@ -20,7 +19,6 @@ data class Discussion(
   data class Comment(
     val id: String,
     val body: String,
-    val length: Int,
     val createdAt: LocalDateTime,
     val author: User,
   )

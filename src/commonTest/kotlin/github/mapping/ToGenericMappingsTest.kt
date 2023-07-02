@@ -8,6 +8,7 @@ import github.models.GitHubPullRequest.File
 import github.models.GitHubPullRequest.Review
 import github.models.GitHubRepository
 import github.models.GitHubUser
+import kotlin.test.Test
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
@@ -16,7 +17,6 @@ import models.CodeReview.Changes
 import models.CodeReview.Feedback
 import models.Discussion
 import models.User
-import kotlin.test.Test
 
 class ToGenericMappingsTest {
 
@@ -231,7 +231,6 @@ class ToGenericMappingsTest {
   private fun genericDiscussionComment() = Discussion.Comment(
     id = "123",
     body = "Comment body",
-    length = "Comment body".length,
     createdAt = fixedDateTime,
     author = genericUser(),
   )
@@ -239,7 +238,6 @@ class ToGenericMappingsTest {
   private fun gitHubDiscussionComment() = GitHubDiscussion.Comment(
     id = "123",
     body = "Comment body",
-    length = "Comment body".length,
     createdAt = fixedDateTime,
     author = gitHubUser(),
   )

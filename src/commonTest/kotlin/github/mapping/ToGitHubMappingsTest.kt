@@ -80,7 +80,6 @@ class ToGitHubMappingsTest {
   private fun gitHubComment() = GitHubDiscussion.Comment(
     id = "id",
     body = "body",
-    length = "body".length,
     author = gitHubUser(),
     createdAt = fixedDateTime,
   )

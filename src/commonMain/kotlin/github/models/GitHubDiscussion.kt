@@ -7,7 +7,6 @@ data class GitHubDiscussion(
   val number: Int,
   val title: String,
   val body: String,
-  val length: Int = body.length,
   val createdAt: LocalDateTime,
   val closedAt: LocalDateTime?,
   val comments: List<Comment> = emptyList(),
@@ -17,7 +16,6 @@ data class GitHubDiscussion(
   data class Comment(
     val id: String,
     val body: String,
-    val length: Int = body.length,
     val createdAt: LocalDateTime,
     val author: GitHubUser,
   )
