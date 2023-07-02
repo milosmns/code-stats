@@ -1,0 +1,48 @@
+name: Build Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  build_mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.m2/repository
+            ~/.konan
+          key: ${{ runner.os }}-gradle-dependency-cache
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 8
+          cache: gradle
+
+      - name: Lint check
+        run: ./gradlew ktlintCheck
+
+      - name: Build all flavors
+        run: ./gradlew assemble
+
+      - name: Run all tests
+        run: ./gradlew allTests
+
+      - name: Publish to GitHub Releases
+        run: ./gradlew githubRelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUILD_QUALITY: "GA"
