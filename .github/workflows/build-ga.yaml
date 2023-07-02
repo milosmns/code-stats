@@ -43,6 +43,9 @@ jobs:
       - name: Run all tests
         run: ./gradlew allTests
 
+      - name: Prepare for Publishing
+        run: ./gradlew prepareForPublish
+
       - name: Publish to GitHub Releases
         run: ./gradlew githubRelease
         env:
