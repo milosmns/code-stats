@@ -1,15 +1,15 @@
-package github.mapping
+package history.github.mapping
 
 import models.CodeReview as GenericCodeReview
 import models.Discussion as GenericDiscussion
 import models.Repository as GenericRepository
 import models.User as GenericUser
-import github.models.GitHubDiscussion
-import github.models.GitHubPullRequest
-import github.models.GitHubPullRequest.File
-import github.models.GitHubPullRequest.Review
-import github.models.GitHubRepository
-import github.models.GitHubUser
+import history.github.models.GitHubDiscussion
+import history.github.models.GitHubPullRequest
+import history.github.models.GitHubPullRequest.File
+import history.github.models.GitHubPullRequest.Review
+import history.github.models.GitHubRepository
+import history.github.models.GitHubUser
 import models.CodeReview.Changes
 import models.CodeReview.Feedback
 

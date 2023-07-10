@@ -1,13 +1,13 @@
-package github.mapping
+package history.github.mapping
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import github.models.GitHubDiscussion
-import github.models.GitHubPullRequest
-import github.models.GitHubPullRequest.File
-import github.models.GitHubPullRequest.Review
-import github.models.GitHubRepository
-import github.models.GitHubUser
+import history.github.models.GitHubDiscussion
+import history.github.models.GitHubPullRequest
+import history.github.models.GitHubPullRequest.File
+import history.github.models.GitHubPullRequest.Review
+import history.github.models.GitHubRepository
+import history.github.models.GitHubUser
 import kotlin.test.Test
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone

@@ -1,4 +1,4 @@
-package github.models
+package history.github.models
 
 data class GitHubRepository(
   val owner: String,

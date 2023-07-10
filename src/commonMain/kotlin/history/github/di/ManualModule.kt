@@ -1,4 +1,4 @@
-package github.di
+package history.github.di
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.http.HttpRequest
@@ -6,9 +6,10 @@ import com.apollographql.apollo3.api.http.HttpResponse
 import com.apollographql.apollo3.network.http.HttpInterceptor
 import com.apollographql.apollo3.network.http.HttpInterceptorChain
 import com.apollographql.apollo3.network.http.LoggingInterceptor
-import github.GitHubDiscussionFetcher
-import github.GitHubHistoryConfig
-import github.GitHubPullRequestFetcher
+import history.github.GitHubDiscussionFetcher
+import history.github.GitHubHistory
+import history.github.GitHubPullRequestFetcher
+import history.github.config.GitHubHistoryConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngineFactory
 import io.ktor.client.plugins.auth.Auth
@@ -25,6 +26,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import models.TeamHistoryConfig
 
+@Suppress("NO_ACTUAL_FOR_EXPECT") // IDEA bug, ignore
 expect fun provideHttpClientEngineFactory(): HttpClientEngineFactory<*>
 
 private val jsonSerializer: Json = Json {
@@ -32,6 +34,32 @@ private val jsonSerializer: Json = Json {
   ignoreUnknownKeys = true
   coerceInputValues = true
   isLenient = true
+}
+
+fun provideGitHubHistory(
+  teamHistoryConfig: TeamHistoryConfig,
+  gitHubHistoryConfig: GitHubHistoryConfig? = null,
+) = GitHubHistory(
+  teamHistoryConfig = teamHistoryConfig,
+  overrideGitHubHistoryConfig = gitHubHistoryConfig,
+)
+
+fun provideGitHubHistoryConfig(
+  overrideBaseRestUrL: String? = null,
+  overrideBaseGraphQlUrL: String? = null,
+  overrideAuthToken: String? = null,
+  overridePagingLimit: Int? = null,
+  overrideIsVerbose: Boolean? = null,
+  overrideShouldPrintProgress: Boolean? = null,
+) = GitHubHistoryConfig().let {
+  it.copy(
+    baseRestUrl = overrideBaseRestUrL ?: it.baseRestUrl,
+    baseGraphQlUrl = overrideBaseGraphQlUrL ?: it.baseGraphQlUrl,
+    authToken = overrideAuthToken ?: it.authToken,
+    pagingLimit = overridePagingLimit ?: it.pagingLimit,
+    isVerbose = overrideIsVerbose ?: it.isVerbose,
+    shouldPrintProgress = overrideShouldPrintProgress ?: it.shouldPrintProgress,
+  )
 }
 
 fun provideHttpClient(gitHubHistoryConfig: GitHubHistoryConfig): HttpClient =

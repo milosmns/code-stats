@@ -1,12 +1,12 @@
-package github.mapping
+package history.github.mapping
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.github.graphql.GetDiscussionCommentsPageQuery
 import com.github.graphql.GetDiscussionQuery
 import com.github.graphql.GetDiscussionsPageQuery
-import github.models.GitHubDiscussion
-import github.models.GitHubUser
+import history.github.models.GitHubDiscussion
+import history.github.models.GitHubUser
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant

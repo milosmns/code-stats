@@ -1,4 +1,4 @@
-package github.models
+package history.github.models
 
 import kotlinx.datetime.LocalDateTime
 

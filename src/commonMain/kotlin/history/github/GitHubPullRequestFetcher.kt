@@ -1,8 +1,9 @@
-package github
+package history.github
 
 import Printable
 import PrintableLn
-import github.models.GitHubPullRequest
+import history.github.config.GitHubHistoryConfig
+import history.github.models.GitHubPullRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

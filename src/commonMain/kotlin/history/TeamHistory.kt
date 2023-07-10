@@ -1,4 +1,4 @@
-package vcs
+package history
 
 import models.CodeReview
 import models.Discussion

@@ -1,25 +1,28 @@
-package github
+package history.github
 
 import PrintableLn
-import github.di.provideDiscussionFetcherFor
-import github.di.provideGraphQlClient
-import github.di.provideHttpClient
-import github.di.providePullRequestFetcherFor
-import github.mapping.toGeneric
-import github.models.GitHubDiscussion
-import github.models.GitHubPullRequest
+import history.github.config.GitHubHistoryConfig
+import history.github.di.provideDiscussionFetcherFor
+import history.github.di.provideGitHubHistoryConfig
+import history.github.di.provideGraphQlClient
+import history.github.di.provideHttpClient
+import history.github.di.providePullRequestFetcherFor
+import history.github.mapping.toGeneric
+import history.github.models.GitHubDiscussion
+import history.github.models.GitHubPullRequest
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import models.Repository
 import models.TeamHistoryConfig
 import printableLn
-import vcs.TeamHistory
+import history.TeamHistory
 
 class GitHubHistory(
   override val teamHistoryConfig: TeamHistoryConfig,
-  private val gitHubHistoryConfig: GitHubHistoryConfig = GitHubHistoryConfig(),
+  overrideGitHubHistoryConfig: GitHubHistoryConfig? = null,
 ) : TeamHistory {
 
+  private val gitHubHistoryConfig: GitHubHistoryConfig = overrideGitHubHistoryConfig ?: provideGitHubHistoryConfig()
   private val httpClient = provideHttpClient(gitHubHistoryConfig)
   private val graphQlClient = provideGraphQlClient(gitHubHistoryConfig)
 

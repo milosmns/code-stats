@@ -1,4 +1,4 @@
-package github
+package history.github
 
 import Printable
 import PrintableLn
@@ -10,9 +10,10 @@ import com.github.graphql.GetDiscussionsPageQuery
 import com.github.graphql.type.DiscussionOrder
 import com.github.graphql.type.DiscussionOrderField
 import com.github.graphql.type.OrderDirection
-import github.mapping.toGitHubDiscussion
-import github.mapping.withRepliesToGitHubComments
-import github.models.GitHubDiscussion
+import history.github.config.GitHubHistoryConfig
+import history.github.mapping.toGitHubDiscussion
+import history.github.mapping.withRepliesToGitHubComments
+import history.github.models.GitHubDiscussion
 import models.TeamHistoryConfig
 import parallelMap
 import printable
