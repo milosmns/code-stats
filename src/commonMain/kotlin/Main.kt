@@ -1,13 +1,14 @@
-import github.GitHubHistory
+import history.TeamHistory
+import history.github.di.provideGitHubHistory
+import history.github.di.provideGitHubHistoryConfig
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import models.TeamHistoryConfig
-import vcs.TeamHistory
 
 @OptIn(ExperimentalSerializationApi::class)
-fun main() = runBlocking {
+fun main(): Unit = runBlocking {
   println("\n== Code Stats CLI ==\n")
 
   println("Loading configuration...")
@@ -15,7 +16,10 @@ fun main() = runBlocking {
   println("Configuration loaded. $teamHistoryConfig")
 
   println("Loading team history...")
-  val history: TeamHistory = GitHubHistory(teamHistoryConfig)
+  val history: TeamHistory = provideGitHubHistory(
+    teamHistoryConfig = teamHistoryConfig,
+    gitHubHistoryConfig = provideGitHubHistoryConfig(),
+  )
 
   try {
     val chosenRepo = teamHistoryConfig.teams.first().discussionRepositories.first()
