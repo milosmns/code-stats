@@ -278,3 +278,4 @@ gradle-app.setting
 ## Custom rules
 
 src/commonMain/resources/sample.config.yaml
+*.db
