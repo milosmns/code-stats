@@ -1,0 +1,107 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+CREATE TABLE IF NOT EXISTS User
+(
+  login TEXT PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS Repository
+(
+  owner       TEXT NOT NULL,
+  name        TEXT NOT NULL,
+  PRIMARY KEY (owner, name)
+);
+
+CREATE TABLE IF NOT EXISTS Discussion
+(
+  id           TEXT    NOT NULL,
+  number       INTEGER NOT NULL,
+  title        TEXT    NOT NULL,
+  body         TEXT    NOT NULL,
+  created_at   TEXT    NOT NULL,
+  closed_at    TEXT,
+  author_login TEXT    NOT NULL,
+  repo_owner   TEXT    NOT NULL,
+  repo_name    TEXT    NOT NULL,
+  FOREIGN KEY  (author_login) REFERENCES User (login),
+  FOREIGN KEY  (repo_owner, repo_name) REFERENCES Repository (owner, name),
+  PRIMARY KEY  (repo_owner, repo_name, id)
+);
+
+CREATE TABLE IF NOT EXISTS DiscussionComment
+(
+  id            TEXT NOT NULL,
+  body          TEXT NOT NULL,
+  created_at    TEXT NOT NULL,
+  discussion_id TEXT NOT NULL,
+  author_login  TEXT NOT NULL,
+  repo_owner    TEXT NOT NULL,
+  repo_name     TEXT NOT NULL,
+  FOREIGN KEY   (author_login) REFERENCES User (login),
+  FOREIGN KEY   (repo_owner, repo_name, discussion_id) REFERENCES Discussion (repo_owner, repo_name, id),
+  PRIMARY KEY   (repo_owner, repo_name, discussion_id, id)
+);
+
+CREATE TABLE IF NOT EXISTS CodeReview
+(
+  id            INTEGER NOT NULL,
+  number        INTEGER NOT NULL,
+  state         TEXT    NOT NULL,
+  title         TEXT    NOT NULL,
+  body          TEXT    NOT NULL,
+  reviewers_csv TEXT    NOT NULL,
+  is_draft      INTEGER NOT NULL,
+  changed_files INTEGER NOT NULL,
+  created_at    TEXT    NOT NULL,
+  closed_at     TEXT,
+  merged_at     TEXT,
+  author_login  TEXT    NOT NULL,
+  repo_owner    TEXT    NOT NULL,
+  repo_name     TEXT    NOT NULL,
+  FOREIGN KEY   (author_login) REFERENCES User (login),
+  FOREIGN KEY   (repo_owner, repo_name) REFERENCES Repository (owner, name),
+  PRIMARY KEY   (repo_owner, repo_name, id)
+);
+
+CREATE TABLE IF NOT EXISTS CodeReviewComment
+(
+  id             INTEGER NOT NULL,
+  body           TEXT    NOT NULL,
+  created_at     TEXT    NOT NULL,
+  code_review_id INTEGER NOT NULL,
+  author_login   TEXT    NOT NULL,
+  repo_owner     TEXT    NOT NULL,
+  repo_name      TEXT    NOT NULL,
+  FOREIGN KEY    (author_login) REFERENCES User (login),
+  FOREIGN KEY    (repo_owner, repo_name, code_review_id) REFERENCES CodeReview (repo_owner, repo_name, id),
+  PRIMARY KEY    (repo_owner, repo_name, code_review_id, id)
+);
+
+CREATE TABLE IF NOT EXISTS CodeReviewChange
+(
+  status         TEXT    NOT NULL,
+  additions      INTEGER NOT NULL,
+  deletions      INTEGER NOT NULL,
+  total          INTEGER NOT NULL,
+  file_name      TEXT    NOT NULL,
+  code_review_id INTEGER NOT NULL,
+  repo_owner     TEXT    NOT NULL,
+  repo_name      TEXT    NOT NULL,
+  FOREIGN KEY    (repo_owner, repo_name, code_review_id) REFERENCES CodeReview (repo_owner, repo_name, id),
+  PRIMARY KEY    (repo_owner, repo_name, code_review_id, file_name)
+);
+
+CREATE TABLE IF NOT EXISTS CodeReviewFeedback
+(
+  id             INTEGER NOT NULL,
+  body           TEXT    NOT NULL,
+  state          TEXT    NOT NULL,
+  submitted_at   TEXT,
+  code_review_id INTEGER NOT NULL,
+  author_login   TEXT    NOT NULL,
+  repo_owner     TEXT    NOT NULL,
+  repo_name      TEXT    NOT NULL,
+  FOREIGN KEY    (author_login) REFERENCES User (login),
+  FOREIGN KEY    (repo_owner, repo_name, code_review_id) REFERENCES CodeReview (repo_owner, repo_name, id),
+  PRIMARY KEY    (repo_owner, repo_name, code_review_id, id)
+);
