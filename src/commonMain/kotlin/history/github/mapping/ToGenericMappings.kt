@@ -10,7 +10,7 @@ import history.github.models.GitHubPullRequest.File
 import history.github.models.GitHubPullRequest.Review
 import history.github.models.GitHubRepository
 import history.github.models.GitHubUser
-import models.CodeReview.Changes
+import models.CodeReview.Change
 import models.CodeReview.Feedback
 
 fun GitHubUser.toGeneric(): GenericUser =
@@ -44,19 +44,19 @@ fun GitHubPullRequest.State.toGeneric(): GenericCodeReview.State =
     GitHubPullRequest.State.CLOSED -> GenericCodeReview.State.CLOSED
   }
 
-fun File.Status.toGeneric(): Changes.Status =
+fun File.Status.toGeneric(): Change.Status =
   when (this) {
-    File.Status.ADDED -> Changes.Status.ADDED
-    File.Status.MODIFIED -> Changes.Status.MODIFIED
-    File.Status.REMOVED -> Changes.Status.REMOVED
-    File.Status.RENAMED -> Changes.Status.RENAMED
-    File.Status.COPIED -> Changes.Status.COPIED
-    File.Status.CHANGED -> Changes.Status.CHANGED
-    File.Status.UNCHANGED -> Changes.Status.UNCHANGED
+    File.Status.ADDED -> Change.Status.ADDED
+    File.Status.MODIFIED -> Change.Status.MODIFIED
+    File.Status.REMOVED -> Change.Status.REMOVED
+    File.Status.RENAMED -> Change.Status.RENAMED
+    File.Status.COPIED -> Change.Status.COPIED
+    File.Status.CHANGED -> Change.Status.CHANGED
+    File.Status.UNCHANGED -> Change.Status.UNCHANGED
   }
 
-fun File.toGeneric(): Changes =
-  Changes(
+fun File.toGeneric(): Change =
+  Change(
     status = status.toGeneric(),
     additions = additions,
     deletions = deletions,

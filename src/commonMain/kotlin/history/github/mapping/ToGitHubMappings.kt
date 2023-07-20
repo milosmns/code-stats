@@ -51,8 +51,8 @@ fun GetDiscussionsPageQuery.Author.toGitHubUser(): GitHubUser =
   )
 
 /**
- * Recursively converts a [GetDiscussionCommentsPageQuery.Comment] to
- * a list of [GitHubDiscussion.Comment]. Includes replies to the original comment.
+ * Iteratively converts a [GetDiscussionCommentsPageQuery.Comment] to a list
+ * of [GitHubDiscussion.Comment]s. Includes replies to the original comment.
  */
 fun GetDiscussionCommentsPageQuery.Comment.withRepliesToGitHubComments(): List<GitHubDiscussion.Comment> =
   mutableListOf<GitHubDiscussion.Comment>()

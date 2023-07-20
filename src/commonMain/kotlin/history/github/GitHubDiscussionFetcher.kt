@@ -14,6 +14,7 @@ import history.github.config.GitHubHistoryConfig
 import history.github.mapping.toGitHubDiscussion
 import history.github.mapping.withRepliesToGitHubComments
 import history.github.models.GitHubDiscussion
+import kotlinx.coroutines.delay
 import models.TeamHistoryConfig
 import parallelMap
 import printable
@@ -28,8 +29,10 @@ class GitHubDiscussionFetcher(
 
   private val owner = teamHistoryConfig.owner
   private val pagingLimit = gitHubHistoryConfig.pagingLimit
+  private val rateLimitDelayMillis = gitHubHistoryConfig.rateLimitDelayMillis
 
   suspend fun fetchDiscussion(number: Int): GitHubDiscussion {
+    delay(rateLimitDelayMillis)
     val query = GetDiscussionQuery(
       owner = teamHistoryConfig.owner,
       repository = repository,
@@ -47,6 +50,7 @@ class GitHubDiscussionFetcher(
     var lastCursor: String? = null
     val allDiscussions = mutableListOf<GitHubDiscussion>()
     paging@ do {
+      delay(rateLimitDelayMillis)
       val query = GetDiscussionsPageQuery(
         owner = owner,
         repository = repository,
@@ -96,6 +100,7 @@ class GitHubDiscussionFetcher(
     var lastCursor: String? = null
     val allComments = mutableListOf<GitHubDiscussion.Comment>()
     do {
+      delay(rateLimitDelayMillis)
       val query = GetDiscussionCommentsPageQuery(
         owner = owner,
         repository = repository,

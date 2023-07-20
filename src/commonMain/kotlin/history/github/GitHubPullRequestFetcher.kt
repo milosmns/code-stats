@@ -8,6 +8,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.delay
 import models.TeamHistoryConfig
 import parallelMap
 import printable
@@ -22,9 +23,11 @@ class GitHubPullRequestFetcher(
 
   private val owner = teamHistoryConfig.owner
   private val pagingLimit = gitHubHistoryConfig.pagingLimit.toString()
+  private val rateLimitDelayMillis = gitHubHistoryConfig.rateLimitDelayMillis
   private val endpoints = Endpoints()
 
   suspend fun fetchPullRequest(number: Int): GitHubPullRequest {
+    delay(rateLimitDelayMillis)
     val url = endpoints.pullRequest(number)
     val response = httpClient.get(url)
     if (response.status.value !in 200..299) error(
@@ -48,6 +51,7 @@ class GitHubPullRequestFetcher(
     val url = endpoints.pullRequests
     val allRequests = mutableListOf<GitHubPullRequest>()
     paging@ while (true) {
+      delay(rateLimitDelayMillis)
       val response = httpClient.get(url) {
         url {
           with(parameters) {
@@ -107,6 +111,7 @@ class GitHubPullRequestFetcher(
     val allReviews = mutableListOf<GitHubPullRequest.Review>()
 
     while (true) {
+      delay(rateLimitDelayMillis)
       val response = httpClient.get(url) {
         url {
           with(parameters) {
@@ -151,6 +156,7 @@ class GitHubPullRequestFetcher(
     val allComments = mutableListOf<GitHubPullRequest.Comment>()
 
     while (true) {
+      delay(rateLimitDelayMillis)
       val response = httpClient.get(url) {
         url {
           with(parameters) {
@@ -185,6 +191,7 @@ class GitHubPullRequestFetcher(
     val allFiles = mutableListOf<GitHubPullRequest.File>()
 
     while (true) {
+      delay(rateLimitDelayMillis)
       val response = httpClient.get(url) {
         url {
           with(parameters) {

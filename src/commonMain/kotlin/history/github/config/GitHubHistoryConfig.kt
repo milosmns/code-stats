@@ -30,4 +30,9 @@ data class GitHubHistoryConfig(
   val shouldPrintProgress: Boolean =
     readEnvVar("GITHUB_PROGRESS")?.toBoolean()
       ?: true,
+
+  val rateLimitDelayMillis: Long =
+    readEnvVar("GITHUB_RATE_LIMIT_DELAY_MILLIS")?.toLongOrNull()
+      ?.takeIf { it > 0 }
+      ?: 200L,
 )

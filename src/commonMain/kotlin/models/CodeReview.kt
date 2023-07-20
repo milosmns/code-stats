@@ -15,7 +15,7 @@ data class CodeReview(
   val isDraft: Boolean,
   val changedFiles: Int,
   val comments: List<Comment>,
-  val changes: List<Changes>,
+  val changes: List<Change>,
   val feedbacks: List<Feedback>,
   val createdAt: LocalDateTime,
   val closedAt: LocalDateTime?,
@@ -34,7 +34,7 @@ data class CodeReview(
   )
 
   @Serializable
-  data class Changes(
+  data class Change(
     val status: Status,
     val additions: Int,
     val deletions: Int,

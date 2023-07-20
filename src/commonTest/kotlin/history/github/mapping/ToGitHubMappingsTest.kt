@@ -7,10 +7,10 @@ import com.github.graphql.GetDiscussionQuery
 import com.github.graphql.GetDiscussionsPageQuery
 import history.github.models.GitHubDiscussion
 import history.github.models.GitHubUser
+import kotlin.test.Test
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import kotlin.test.Test
 
 class ToGitHubMappingsTest {
 
@@ -39,7 +39,7 @@ class ToGitHubMappingsTest {
 
   @Test fun `GraphQL comment to GitHub comments`() {
     val result = graphQlComment().withRepliesToGitHubComments()
-    val expected = listOf(gitHubComment(), gitHubComment()) // 2 because one is a reply
+    val expected = listOf(gitHubComment(), gitHubComment(idOverride = "idr")) // second comment is actually a reply
 
     assertThat(result).isEqualTo(expected)
   }
@@ -65,20 +65,18 @@ class ToGitHubMappingsTest {
   )
 
   private fun gitHubDiscussion() = GitHubDiscussion(
-    id = "id",
+    id = "idd",
     number = 1,
     title = "title",
     body = "body",
     author = gitHubUser(),
     createdAt = fixedDateTime,
     closedAt = fixedDateTime,
-    comments = gitHubComments(),
+    comments = listOf(gitHubComment()),
   )
 
-  private fun gitHubComments() = listOf(gitHubComment())
-
-  private fun gitHubComment() = GitHubDiscussion.Comment(
-    id = "id",
+  private fun gitHubComment(idOverride: String? = null) = GitHubDiscussion.Comment(
+    id = idOverride ?: "idc",
     body = "body",
     author = gitHubUser(),
     createdAt = fixedDateTime,
@@ -89,7 +87,7 @@ class ToGitHubMappingsTest {
   )
 
   private fun graphQlDiscussion() = GetDiscussionQuery.Discussion(
-    id = "id",
+    id = "idd",
     number = 1,
     title = "title",
     body = "body",
@@ -99,7 +97,7 @@ class ToGitHubMappingsTest {
   )
 
   private fun graphQlComment() = GetDiscussionCommentsPageQuery.Comment(
-    id = "id",
+    id = "idc",
     body = "body",
     commentAuthor = graphQlCommentAuthor(),
     createdAt = fixedDateTime.toInstant(TimeZone.UTC).toString(),
@@ -111,14 +109,14 @@ class ToGitHubMappingsTest {
   )
 
   private fun graphQlReply() = GetDiscussionCommentsPageQuery.Reply(
-    id = "id",
+    id = "idr",
     body = "body",
     replyAuthor = graphQlReplyAuthor(),
     createdAt = fixedDateTime.toInstant(TimeZone.UTC).toString(),
   )
 
   private fun graphQlDiscussionsPageDiscussion() = GetDiscussionsPageQuery.Discussion(
-    id = "id",
+    id = "idd",
     number = 1,
     title = "title",
     body = "body",

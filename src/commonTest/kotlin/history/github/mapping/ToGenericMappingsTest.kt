@@ -13,7 +13,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import models.CodeReview
-import models.CodeReview.Changes
+import models.CodeReview.Change
 import models.CodeReview.Feedback
 import models.Discussion
 import models.User
@@ -50,16 +50,16 @@ class ToGenericMappingsTest {
     assertThat(results).isEqualTo(expected)
   }
 
-  @Test fun `GitHub pull request file status to generic changes status`() {
+  @Test fun `GitHub pull request file status to generic change status`() {
     val results = File.Status.values().map(File.Status::toGeneric)
-    val expected = Changes.Status.values().toList()
+    val expected = Change.Status.values().toList()
 
     assertThat(results).isEqualTo(expected)
   }
 
-  @Test fun `GitHub pull request file to generic changes`() {
+  @Test fun `GitHub pull request file to generic change`() {
     val result = gitHubPullRequestFile().toGeneric()
-    val expected = genericCodeReviewChanges()
+    val expected = genericCodeReviewChange()
 
     assertThat(result).isEqualTo(expected)
   }
@@ -102,11 +102,8 @@ class ToGenericMappingsTest {
 
   // region Helpers
 
-  private fun gitHubRepository() = GitHubRepository(
-    owner = "Repository owner",
-    name = "Repository name",
-    pullRequests = listOf(gitHubPullRequest()),
-    repoDiscussions = listOf(gitHubDiscussion()),
+  private fun genericUser() = User(
+    login = "octocat",
   )
 
   private fun genericRepository() = models.Repository(
@@ -116,8 +113,26 @@ class ToGenericMappingsTest {
     discussions = listOf(genericDiscussion()),
   )
 
+  private fun genericDiscussion() = Discussion(
+    id = "1238",
+    number = 1,
+    title = "Discussion title",
+    body = "Discussion body",
+    author = genericUser(),
+    createdAt = fixedDateTime,
+    closedAt = fixedDateTime,
+    comments = listOf(genericDiscussionComment()),
+  )
+
+  private fun genericDiscussionComment() = Discussion.Comment(
+    id = "1237",
+    body = "Comment body",
+    createdAt = fixedDateTime,
+    author = genericUser(),
+  )
+
   private fun genericCodeReview() = CodeReview(
-    id = 123,
+    id = 1235,
     number = 1,
     state = CodeReview.State.OPEN,
     title = "Pull request title",
@@ -127,15 +142,67 @@ class ToGenericMappingsTest {
     isDraft = true,
     changedFiles = 3,
     comments = listOf(genericCodeReviewComment()),
-    changes = listOf(genericCodeReviewChanges()),
+    changes = listOf(genericCodeReviewChange()),
     feedbacks = listOf(genericCodeReviewFeedback()),
     createdAt = fixedDateTime,
     closedAt = fixedDateTime,
     mergedAt = fixedDateTime,
   )
 
+  private fun genericCodeReviewComment() = CodeReview.Comment(
+    id = 1230,
+    body = "Comment body",
+    createdAt = fixedDateTime,
+    author = genericUser(),
+  )
+
+  private fun genericCodeReviewChange() = Change(
+    status = Change.Status.ADDED,
+    additions = 1,
+    deletions = 2,
+    total = 3,
+    fileName = "file.txt",
+  )
+
+  private fun genericCodeReviewFeedback() = Feedback(
+    id = 1234,
+    body = "Review body",
+    state = Feedback.State.APPROVED,
+    submittedAt = fixedDateTime,
+    author = genericUser(),
+  )
+
+  private fun gitHubUser() = GitHubUser(
+    login = "octocat",
+  )
+
+  private fun gitHubRepository() = GitHubRepository(
+    owner = "Repository owner",
+    name = "Repository name",
+    pullRequests = listOf(gitHubPullRequest()),
+    repoDiscussions = listOf(gitHubDiscussion()),
+  )
+
+  private fun gitHubDiscussion() = GitHubDiscussion(
+    id = "1238",
+    number = 1,
+    title = "Discussion title",
+    body = "Discussion body",
+    author = gitHubUser(),
+    createdAt = fixedDateTime,
+    closedAt = fixedDateTime,
+    comments = listOf(gitHubDiscussionComment()),
+  )
+
+  private fun gitHubDiscussionComment() = GitHubDiscussion.Comment(
+    id = "1237",
+    body = "Comment body",
+    createdAt = fixedDateTime,
+    author = gitHubUser(),
+  )
+
   private fun gitHubPullRequest() = GitHubPullRequest(
-    id = 123,
+    id = 1235,
     number = 1,
     state = GitHubPullRequest.State.OPEN,
     title = "Pull request title",
@@ -153,41 +220,10 @@ class ToGenericMappingsTest {
   )
 
   private fun gitHubPullRequestComment() = GitHubPullRequest.Comment(
-    id = 123,
+    id = 1230,
     body = "Comment body",
     createdAtInstant = fixedDateTime.toInstant(TimeZone.UTC),
     author = gitHubUser(),
-  )
-
-  private fun gitHubPullRequestReview() = Review(
-    id = 123,
-    body = "Review body",
-    state = Review.State.APPROVED,
-    submittedAtInstant = fixedDateTime.toInstant(TimeZone.UTC),
-    author = gitHubUser(),
-  )
-
-  private fun genericCodeReviewComment() = CodeReview.Comment(
-    id = 123,
-    body = "Comment body",
-    createdAt = fixedDateTime,
-    author = genericUser(),
-  )
-
-  private fun genericCodeReviewFeedback() = Feedback(
-    id = 123,
-    body = "Review body",
-    state = Feedback.State.APPROVED,
-    submittedAt = fixedDateTime,
-    author = genericUser(),
-  )
-
-  private fun genericCodeReviewChanges() = Changes(
-    status = Changes.Status.ADDED,
-    additions = 1,
-    deletions = 2,
-    total = 3,
-    fileName = "file.txt",
   )
 
   private fun gitHubPullRequestFile() = File(
@@ -198,47 +234,11 @@ class ToGenericMappingsTest {
     fileName = "file.txt",
   )
 
-  private fun genericUser() = User(
-    login = "octocat",
-  )
-
-  private fun gitHubUser() = GitHubUser(
-    login = "octocat",
-  )
-
-  private fun genericDiscussion() = Discussion(
-    id = "123",
-    number = 1,
-    title = "Discussion title",
-    body = "Discussion body",
-    author = genericUser(),
-    createdAt = fixedDateTime,
-    closedAt = fixedDateTime,
-    comments = listOf(genericDiscussionComment()),
-  )
-
-  private fun gitHubDiscussion() = GitHubDiscussion(
-    id = "123",
-    number = 1,
-    title = "Discussion title",
-    body = "Discussion body",
-    author = gitHubUser(),
-    createdAt = fixedDateTime,
-    closedAt = fixedDateTime,
-    comments = listOf(gitHubDiscussionComment()),
-  )
-
-  private fun genericDiscussionComment() = Discussion.Comment(
-    id = "123",
-    body = "Comment body",
-    createdAt = fixedDateTime,
-    author = genericUser(),
-  )
-
-  private fun gitHubDiscussionComment() = GitHubDiscussion.Comment(
-    id = "123",
-    body = "Comment body",
-    createdAt = fixedDateTime,
+  private fun gitHubPullRequestReview() = Review(
+    id = 1234,
+    body = "Review body",
+    state = Review.State.APPROVED,
+    submittedAtInstant = fixedDateTime.toInstant(TimeZone.UTC),
     author = gitHubUser(),
   )
 

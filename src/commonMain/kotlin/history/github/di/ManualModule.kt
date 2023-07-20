@@ -29,19 +29,14 @@ import models.TeamHistoryConfig
 @Suppress("NO_ACTUAL_FOR_EXPECT") // IDEA bug, ignore
 expect fun provideHttpClientEngineFactory(): HttpClientEngineFactory<*>
 
-private val jsonSerializer: Json = Json {
-  useAlternativeNames = false
-  ignoreUnknownKeys = true
-  coerceInputValues = true
-  isLenient = true
-}
-
 fun provideGitHubHistory(
   teamHistoryConfig: TeamHistoryConfig,
-  gitHubHistoryConfig: GitHubHistoryConfig? = null,
+  gitHubHistoryConfig: GitHubHistoryConfig = provideGitHubHistoryConfig(),
 ) = GitHubHistory(
   teamHistoryConfig = teamHistoryConfig,
-  overrideGitHubHistoryConfig = gitHubHistoryConfig,
+  gitHubHistoryConfig = gitHubHistoryConfig,
+  httpClient = provideHttpClient(gitHubHistoryConfig),
+  graphQlClient = provideGraphQlClient(gitHubHistoryConfig),
 )
 
 fun provideGitHubHistoryConfig(
@@ -51,6 +46,7 @@ fun provideGitHubHistoryConfig(
   overridePagingLimit: Int? = null,
   overrideIsVerbose: Boolean? = null,
   overrideShouldPrintProgress: Boolean? = null,
+  overrideRateLimitDelayMillis: Long? = null,
 ) = GitHubHistoryConfig().let {
   it.copy(
     baseRestUrl = overrideBaseRestUrL ?: it.baseRestUrl,
@@ -59,8 +55,17 @@ fun provideGitHubHistoryConfig(
     pagingLimit = overridePagingLimit ?: it.pagingLimit,
     isVerbose = overrideIsVerbose ?: it.isVerbose,
     shouldPrintProgress = overrideShouldPrintProgress ?: it.shouldPrintProgress,
+    rateLimitDelayMillis = overrideRateLimitDelayMillis ?: it.rateLimitDelayMillis,
   )
 }
+
+private fun provideJsonSerializer(): Json =
+  Json {
+    useAlternativeNames = false
+    ignoreUnknownKeys = true
+    coerceInputValues = true
+    isLenient = true
+  }
 
 fun provideHttpClient(gitHubHistoryConfig: GitHubHistoryConfig): HttpClient =
   HttpClient(provideHttpClientEngineFactory()) {
@@ -79,7 +84,7 @@ fun provideHttpClient(gitHubHistoryConfig: GitHubHistoryConfig): HttpClient =
       }
     }
     install(ContentNegotiation) {
-      json(jsonSerializer)
+      json(provideJsonSerializer())
     }
     headers {
       append(HttpHeaders.Accept, "application/vnd.github+json")
