@@ -70,7 +70,7 @@ kotlin {
     val jvmMain by getting {
       dependsOn(commonMain)
       dependencies {
-        implementation(kotlin("stdlib-jdk8"))
+        implementation(kotlin("stdlib"))
         implementation("org.slf4j:slf4j-simple:2.+")
         implementation("io.ktor:ktor-client-cio:2.3.+")
         implementation("app.cash.sqldelight:sqlite-driver:2.+")
@@ -378,9 +378,9 @@ object Configurator {
   fun configureJvmTarget(container: KotlinTargetContainerWithPresetFunctions) =
     container.jvm(OS.Platform.JVM.targetName) {
       compilations.all {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "17"
         compilerOptions.configure {
-          jvmTarget.set(JvmTarget.JVM_1_8)
+          jvmTarget.set(JvmTarget.JVM_17)
         }
       }
       println("Configured Kotlin target '$name'")
