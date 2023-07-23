@@ -1,0 +1,39 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+fetchAll:
+SELECT *
+FROM CodeReview;
+
+fetchOne:
+SELECT *
+FROM CodeReview
+WHERE repo_owner = ? AND repo_name = ? AND id = ?;
+
+fetchOneByNumber:
+SELECT *
+FROM CodeReview
+WHERE repo_owner = ? AND repo_name = ? AND number = ?;
+
+fetchAllByParent:
+SELECT *
+FROM CodeReview
+WHERE repo_owner = ? AND repo_name = ?;
+
+save:
+INSERT OR IGNORE INTO CodeReview
+VALUES ?;
+
+purge:
+DELETE FROM CodeReview;
+
+deleteOne:
+DELETE FROM CodeReview
+WHERE repo_owner = ? AND repo_name = ? AND id = ?;
+
+deleteOneByNumber:
+DELETE FROM CodeReview
+WHERE repo_owner = ? AND repo_name = ? AND number = ?;
+
+deleteAllByParent:
+DELETE FROM CodeReview
+WHERE repo_owner = ? AND repo_name = ?;

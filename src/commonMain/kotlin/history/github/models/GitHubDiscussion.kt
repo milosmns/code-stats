@@ -1,26 +1,23 @@
-package models
+package history.github.models
 
 import kotlinx.datetime.LocalDateTime
-import kotlinx.serialization.Serializable
 
-@Serializable
-data class Discussion(
+data class GitHubDiscussion(
   val id: String,
   val number: Int,
   val title: String,
   val body: String,
   val createdAt: LocalDateTime,
   val closedAt: LocalDateTime?,
-  val comments: List<Comment>,
-  val author: User,
+  val comments: List<Comment> = emptyList(),
+  val author: GitHubUser,
 ) {
 
-  @Serializable
   data class Comment(
     val id: String,
     val body: String,
     val createdAt: LocalDateTime,
-    val author: User,
+    val author: GitHubUser,
   )
 
 }
