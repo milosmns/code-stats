@@ -292,6 +292,7 @@ githubRelease {
     "(?i).*version.*increase.*",
     "(?i).*merge.*request.*",
     "(?i).*request.*merge.*",
+    "(?i).*merge.*",
   ).map(String::toRegex)
 
   val changes = try {
