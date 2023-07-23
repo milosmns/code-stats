@@ -10,13 +10,12 @@ data class CodeReview(
   val state: State,
   val title: String,
   val body: String,
-  val length: Int = body.length,
   val author: User,
   val requestedReviewers: List<User>,
   val isDraft: Boolean,
   val changedFiles: Int,
   val comments: List<Comment>,
-  val changes: List<Changes>,
+  val changes: List<Change>,
   val feedbacks: List<Feedback>,
   val createdAt: LocalDateTime,
   val closedAt: LocalDateTime?,
@@ -28,15 +27,14 @@ data class CodeReview(
 
   @Serializable
   data class Comment(
-    val id: Int,
+    val id: Long,
     val body: String,
-    val length: Int = body.length,
     val author: User,
     val createdAt: LocalDateTime,
   )
 
   @Serializable
-  data class Changes(
+  data class Change(
     val status: Status,
     val additions: Int,
     val deletions: Int,
@@ -51,9 +49,8 @@ data class CodeReview(
 
   @Serializable
   data class Feedback(
-    val id: Int,
+    val id: Long,
     val body: String,
-    val length: Int = body.length,
     val state: State,
     val author: User,
     val submittedAt: LocalDateTime?,

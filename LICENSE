@@ -1,11 +1,19 @@
-                    GNU GENERAL PUBLIC LICENSE
-                       Version 3, 29 June 2007
+                     THE "NON-TOXIC" LICENSE
+                   Based on GNU-GPL version 3
 
- Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
- Everyone is permitted to copy and distribute verbatim copies
- of this license document, but changing it is not allowed.
+  Copyright (C) 2023, Milos Marinkovic <https://milos.marinkovic.xyz/>
+
+  This specific variant of the GNU General Public License is designed
+to prevent the use of the software for malicious purposes. The whole
+GNU-GPL license applies. See the last section for differences.
+
+                   GNU, GENERAL PUBLIC LICENSE
 
                             Preamble
+
+  Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
 
   The GNU General Public License is a free, copyleft license for
 software and other kinds of works.
@@ -672,3 +680,41 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
+
+                       THE "NON-TOXIC" CLAUSE
+       Additional Clause Prohibiting Toxic and Malicious Use
+
+  You may wish to engage in toxic or malicious use of the software covered by
+this license. To prevent that, you are explicitly prohibited from the following
+uses of the software.
+
+  1. Using the software for work assessments.
+
+  You are prohibited from using the software for performance evaluations,
+assessments, or similar purposes that infringe upon an individual's rights to
+fair evaluation and fair treatment in employment-related and non-employment-
+related contexts. You are also prohibited from using the software for tracking
+purposes that infringe upon an individual's rights to privacy and personal
+dignity.
+
+  2. Using the software for tracking.
+
+  You are prohibited from using the software while engaging in activities that
+are designed to exert excessive control, pressure, or coercion upon individuals
+who interact with the software, including but not limited to tracking employees,
+pressuring employees into working more and harder, or engaging in well-
+established micro-management practices.
+
+  You acknowledge and agree that any such use is expressly prohibited and
+constitutes a violation of the terms of this license.
+
+  By exercising any rights granted under this license, you additionally agree to
+use the software solely for lawful purposes and in a manner that respects the
+rights, privacy, and well-being of individuals.
+
+  In the event of a violation of this clause, the licensor reserves the right
+to take appropriate action, including seeking injunctive relief and pursuing
+legal remedies available under applicable laws.
+
+This clause is in addition to and does not supersede any other terms or
+conditions of the original license.

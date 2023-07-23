@@ -9,16 +9,17 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 
-// Kudos to JMFayard for figuring out lots of KMP stuff!
+// Kudos to @JMFayard for figuring out lots of KMP stuff!
 
 plugins {
   application
-  kotlin("multiplatform") version "1.8.+"
+  kotlin("multiplatform") version "1.8.+" // when replacing, search the whole file for "8"
   kotlin("plugin.serialization") version "1.8.+"
   id("com.apollographql.apollo3") version "4.+"
   id("com.github.johnrengelman.shadow") version "8.+"
   id("org.jlleitschuh.gradle.ktlint") version "11.+"
   id("com.github.breadmoirai.github-release") version "2.+"
+  id("app.cash.sqldelight") version "2.+"
 }
 
 repositories {
@@ -69,13 +70,14 @@ kotlin {
     val jvmMain by getting {
       dependsOn(commonMain)
       dependencies {
-        implementation(kotlin("stdlib-jdk8"))
+        implementation(kotlin("stdlib"))
         implementation("org.slf4j:slf4j-simple:2.+")
         implementation("io.ktor:ktor-client-cio:2.3.+")
+        implementation("app.cash.sqldelight:sqlite-driver:2.+")
       }
     }
 
-    @Suppress("UNUSED_VARIABLE") // used by the 'getting' delegate
+    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress") // used by the 'getting' delegate
     val jvmTest by getting {
       dependsOn(commonTest)
       dependsOn(jvmMain)
@@ -85,10 +87,11 @@ kotlin {
       dependsOn(commonMain)
       dependencies {
         implementation("io.ktor:ktor-client-curl:2.3.+")
+        implementation("app.cash.sqldelight:native-driver:2.+")
       }
     }
 
-    @Suppress("UNUSED_VARIABLE") // used by the 'getting' delegate
+    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress") // used by the 'getting' delegate
     val macNativeTest by getting {
       dependsOn(commonTest)
       dependsOn(macNativeMain)
@@ -225,6 +228,14 @@ apollo {
     packageName.set("com.github.graphql")
     outputDirConnection {
       connectToKotlinSourceSet("commonMain")
+    }
+  }
+}
+
+sqldelight {
+  databases {
+    create(Out.artifact) {
+      packageName.set(Out.artifact)
     }
   }
 }
@@ -367,9 +378,9 @@ object Configurator {
   fun configureJvmTarget(container: KotlinTargetContainerWithPresetFunctions) =
     container.jvm(OS.Platform.JVM.targetName) {
       compilations.all {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "17"
         compilerOptions.configure {
-          jvmTarget.set(JvmTarget.JVM_1_8)
+          jvmTarget.set(JvmTarget.JVM_17)
         }
       }
       println("Configured Kotlin target '$name'")
@@ -388,9 +399,9 @@ object Configurator {
         executable(Out.artifact) {
           entryPoint = "main"
         }
-      }
-      target.binaries.all {
-        binaryOptions["memoryModel"] = "experimental"
+        all {
+          binaryOptions["memoryModel"] = "experimental"
+        }
       }
       println("Configured Kotlin/Native target '${target.name}'")
     }
