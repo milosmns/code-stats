@@ -2,7 +2,8 @@
 
 fetchAll:
 SELECT *
-FROM Discussion;
+FROM Discussion
+ORDER BY repo_owner, repo_name, created_at;
 
 fetchOne:
 SELECT *
@@ -12,12 +13,14 @@ WHERE repo_owner = ? AND repo_name = ? AND id = ?;
 fetchOneByNumber:
 SELECT *
 FROM Discussion
-WHERE repo_owner = ? AND repo_name = ? AND number = ?;
+WHERE repo_owner = ? AND repo_name = ? AND number = ?
+ORDER BY repo_owner, repo_name, created_at;
 
 fetchAllByParent:
 SELECT *
 FROM Discussion
-WHERE repo_owner = ? AND repo_name = ?;
+WHERE repo_owner = ? AND repo_name = ?
+ORDER BY repo_owner, repo_name, created_at;
 
 save:
 INSERT OR IGNORE INTO Discussion

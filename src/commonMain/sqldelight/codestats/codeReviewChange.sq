@@ -2,7 +2,8 @@
 
 fetchAll:
 SELECT *
-FROM CodeReviewChange;
+FROM CodeReviewChange
+ORDER BY repo_owner, repo_name, code_review_id, file_name;
 
 fetchOne:
 SELECT *
@@ -12,7 +13,8 @@ WHERE repo_owner = ? AND repo_name = ? AND code_review_id = ? AND file_name = ?;
 fetchAllByParent:
 SELECT *
 FROM CodeReviewChange
-WHERE repo_owner = ? AND repo_name = ? AND code_review_id = ?;
+WHERE repo_owner = ? AND repo_name = ? AND code_review_id = ?
+ORDER BY repo_owner, repo_name, code_review_id, file_name;
 
 save:
 INSERT OR IGNORE INTO CodeReviewChange

@@ -2,7 +2,8 @@
 
 fetchAll:
 SELECT *
-FROM User;
+FROM User
+ORDER BY login ASC;
 
 fetchOne:
 SELECT *

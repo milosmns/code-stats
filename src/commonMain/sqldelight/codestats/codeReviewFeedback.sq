@@ -2,7 +2,8 @@
 
 fetchAll:
 SELECT *
-FROM CodeReviewFeedback;
+FROM CodeReviewFeedback
+ORDER BY repo_owner, repo_name, id, submitted_at;
 
 fetchOne:
 SELECT *
@@ -12,7 +13,8 @@ WHERE repo_owner = ? AND repo_name = ? AND code_review_id = ? AND id = ?;
 fetchAllByParent:
 SELECT *
 FROM CodeReviewFeedback
-WHERE repo_owner = ? AND repo_name = ? AND code_review_id = ?;
+WHERE repo_owner = ? AND repo_name = ? AND code_review_id = ?
+ORDER BY repo_owner, repo_name, id, submitted_at;
 
 save:
 INSERT OR IGNORE INTO CodeReviewFeedback

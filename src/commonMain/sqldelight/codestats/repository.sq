@@ -2,12 +2,14 @@
 
 fetchAll:
 SELECT *
-FROM Repository;
+FROM Repository
+ORDER BY owner, name;
 
 fetchAllByOwner:
 SELECT *
 FROM Repository
-WHERE owner = ?;
+WHERE owner = ?
+ORDER BY owner, name;
 
 fetchOne:
 SELECT *

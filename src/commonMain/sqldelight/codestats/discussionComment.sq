@@ -2,7 +2,8 @@
 
 fetchAll:
 SELECT *
-FROM DiscussionComment;
+FROM DiscussionComment
+ORDER BY repo_owner, repo_name, discussion_id, created_at;
 
 fetchOne:
 SELECT *
@@ -12,7 +13,8 @@ WHERE repo_owner = ? AND repo_name = ? AND discussion_id = ? AND id = ?;
 fetchAllByParent:
 SELECT *
 FROM DiscussionComment
-WHERE repo_owner = ? AND repo_name = ? AND discussion_id = ?;
+WHERE repo_owner = ? AND repo_name = ? AND discussion_id = ?
+ORDER BY repo_owner, repo_name, discussion_id, created_at;
 
 save:
 INSERT OR IGNORE INTO DiscussionComment
