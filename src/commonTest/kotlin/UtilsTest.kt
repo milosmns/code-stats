@@ -46,16 +46,16 @@ class UtilsTest {
       endDate = LocalDate(2022, Month.JANUARY, 1),
       teams = listOf(
         TeamHistoryConfig.Team(
-          name = "stability-chapter",
-          title = "Stability Chapter",
-          codeRepositories = listOf("kssm", "code-stats"),
-          discussionRepositories = listOf("code-stats"),
-        ),
-        TeamHistoryConfig.Team(
           name = "instability-chapter",
           title = "Instability Chapter",
           codeRepositories = listOf("code-stats", "tema"),
           discussionRepositories = listOf("code-stats", "kssm"),
+        ),
+        TeamHistoryConfig.Team(
+          name = "stability-chapter",
+          title = "Stability Chapter",
+          codeRepositories = listOf("code-stats", "kssm"),
+          discussionRepositories = listOf("code-stats"),
         ),
       ),
     )

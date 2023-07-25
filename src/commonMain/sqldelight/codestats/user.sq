@@ -1,0 +1,22 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+fetchAll:
+SELECT *
+FROM User
+ORDER BY login ASC;
+
+fetchOne:
+SELECT *
+FROM User
+WHERE login = ?;
+
+save:
+INSERT OR IGNORE INTO User
+VALUES ?;
+
+purge:
+DELETE FROM User;
+
+deleteOne:
+DELETE FROM User
+WHERE login = ?;

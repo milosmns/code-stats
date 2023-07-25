@@ -8,4 +8,7 @@ data class Repository(
   val name: String,
   val codeReviews: List<CodeReview>,
   val discussions: List<Discussion>,
-)
+) {
+  val fullName: String
+    get() = "$owner/$name"
+}

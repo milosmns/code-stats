@@ -1,0 +1,32 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+fetchAll:
+SELECT *
+FROM Repository
+ORDER BY owner, name;
+
+fetchAllByOwner:
+SELECT *
+FROM Repository
+WHERE owner = ?
+ORDER BY owner, name;
+
+fetchOne:
+SELECT *
+FROM Repository
+WHERE owner = ? AND name = ?;
+
+save:
+INSERT OR IGNORE INTO Repository
+VALUES ?;
+
+purge:
+DELETE FROM Repository;
+
+deleteOne:
+DELETE FROM Repository
+WHERE owner = ? AND name = ?;
+
+deleteAllByOwner:
+DELETE FROM Repository
+WHERE owner = ?;

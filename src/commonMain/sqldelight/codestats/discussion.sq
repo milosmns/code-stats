@@ -1,0 +1,42 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+fetchAll:
+SELECT *
+FROM Discussion
+ORDER BY repo_owner, repo_name, created_at;
+
+fetchOne:
+SELECT *
+FROM Discussion
+WHERE repo_owner = ? AND repo_name = ? AND id = ?;
+
+fetchOneByNumber:
+SELECT *
+FROM Discussion
+WHERE repo_owner = ? AND repo_name = ? AND number = ?
+ORDER BY repo_owner, repo_name, created_at;
+
+fetchAllByParent:
+SELECT *
+FROM Discussion
+WHERE repo_owner = ? AND repo_name = ?
+ORDER BY repo_owner, repo_name, created_at;
+
+save:
+INSERT OR IGNORE INTO Discussion
+VALUES ?;
+
+purge:
+DELETE FROM Discussion;
+
+deleteOne:
+DELETE FROM Discussion
+WHERE repo_owner = ? AND repo_name = ? AND id = ?;
+
+deleteOneByNumber:
+DELETE FROM Discussion
+WHERE repo_owner = ? AND repo_name = ? AND number = ?;
+
+deleteAllByParent:
+DELETE FROM Discussion
+WHERE repo_owner = ? AND repo_name = ?;
