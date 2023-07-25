@@ -51,7 +51,7 @@ fun DatabaseCodeReview.toGeneric(): CodeReview =
     state = CodeReview.State.valueOf(state),
     title = title,
     body = body,
-    requestedReviewers = reviewers_csv.split(",").map(::User),
+    requestedReviewers = reviewers_csv.split(",").filter { it.isNotBlank() }.map(::User),
     isDraft = is_draft == 1L,
     changedFiles = changed_files.toInt(),
     createdAt = LocalDateTime.parse(created_at),
