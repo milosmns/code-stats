@@ -41,8 +41,19 @@ fun TeamHistoryConfig.Companion.fromFile(path: String): TeamHistoryConfig {
   try {
     val ioPath = path.toPath(normalize = true)
     val fileContent = loadFileAsString(ioPath)
-    return Yaml.Default.decodeFromString(fileContent)
+    val config = Yaml.Default.decodeFromString<TeamHistoryConfig>(fileContent)
+    return config.sorted()
   } catch (e: Exception) {
     throw IllegalArgumentException("Could not load config file ($path)", e)
   }
 }
+
+private fun TeamHistoryConfig.sorted() = copy(
+  teams = teams.sortedBy { it.name }
+    .map { team ->
+      team.copy(
+        codeRepositories = team.codeRepositories.sorted(),
+        discussionRepositories = team.discussionRepositories.sorted(),
+      )
+    }
+)
