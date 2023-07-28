@@ -8,10 +8,10 @@ import codestats.Discussion as DatabaseDiscussion
 import codestats.DiscussionComment as DatabaseDiscussionComment
 import codestats.Repository as DatabaseRepository
 import codestats.User as DatabaseUser
-import models.CodeReview
-import models.Discussion
-import models.Repository
-import models.User
+import components.data.CodeReview
+import components.data.Discussion
+import components.data.Repository
+import components.data.User
 
 fun Repository.toStorage(): DatabaseRepository =
   DatabaseRepository(

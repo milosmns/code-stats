@@ -1,11 +1,11 @@
-package history.storage
+package history.storage.sqlite
 
 import codestats.Discussion as DatabaseDiscussion
 import codestats.codestats
+import components.data.Discussion
+import components.data.TeamHistoryConfig
 import history.storage.mapping.toGeneric
 import history.storage.mapping.toStorage
-import models.Discussion
-import models.TeamHistoryConfig
 
 interface DiscussionStorage {
 

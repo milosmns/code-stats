@@ -1,3 +1,4 @@
+import components.data.TeamHistoryConfig
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -10,7 +11,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
-import models.TeamHistoryConfig
 import net.mamoe.yamlkt.Yaml
 import okio.Path
 import okio.Path.Companion.toPath

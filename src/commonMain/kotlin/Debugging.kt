@@ -1,6 +1,6 @@
-import models.CodeReview
-import models.Discussion
-import models.Repository
+import components.data.CodeReview
+import components.data.Discussion
+import components.data.Repository
 
 class Printable(private val content: String) {
   fun onlyIf(condition: Boolean) = if (condition) print(content) else Unit
@@ -46,6 +46,6 @@ fun Discussion.truncate() = copy(
 )
 
 fun Repository.truncate() = copy(
-  codeReviews = codeReviews.map(CodeReview::truncate),
+  codeReviews = codeReviews.map(components.data.CodeReview::truncate),
   discussions = discussions.map(Discussion::truncate),
 )

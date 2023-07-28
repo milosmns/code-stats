@@ -12,10 +12,10 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import kotlin.test.Test
 import kotlinx.datetime.LocalDateTime
-import models.CodeReview
-import models.Discussion
-import models.Repository
-import models.User
+import components.data.CodeReview
+import components.data.Discussion
+import components.data.Repository
+import components.data.User
 
 class ToGenericMappingsTest {
 

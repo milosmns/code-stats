@@ -1,9 +1,17 @@
 package history.storage
 
 import codestats.codestats
-import models.Repository
-import models.TeamHistoryConfig
-import models.User
+import components.data.Repository
+import components.data.TeamHistoryConfig
+import components.data.User
+import history.storage.sqlite.CodeReviewChangeStorage
+import history.storage.sqlite.CodeReviewCommentStorage
+import history.storage.sqlite.CodeReviewFeedbackStorage
+import history.storage.sqlite.CodeReviewStorage
+import history.storage.sqlite.DiscussionCommentStorage
+import history.storage.sqlite.DiscussionStorage
+import history.storage.sqlite.RepositoryStorage
+import history.storage.sqlite.UserStorage
 
 class StoredHistory(
   override val teamHistoryConfig: TeamHistoryConfig,
@@ -40,7 +48,7 @@ class StoredHistory(
 
   fun storeRepositoryDeep(repository: Repository) {
     storeRepository(repository)
-    repository.participants.forEach { storeUser(it) }
+    repository.allUsers.forEach { storeUser(it) }
     repository.discussions.forEach { discussion ->
       storeDiscussion(repository.name, discussion)
       // discussion components require the discussion to exist
@@ -63,7 +71,7 @@ class StoredHistory(
     }
   }
 
-  private val Repository.participants: Set<User>
+  private val Repository.allUsers: Set<User>
     get() {
       val users = mutableSetOf<User>()
       discussions.forEach { discussion ->

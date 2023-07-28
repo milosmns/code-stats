@@ -1,11 +1,11 @@
-package history.storage
+package history.storage.sqlite
 
 import codestats.Repository as DatabaseRepository
 import codestats.codestats
+import components.data.Repository
+import components.data.TeamHistoryConfig
 import history.storage.mapping.toGeneric
 import history.storage.mapping.toStorage
-import models.Repository
-import models.TeamHistoryConfig
 
 interface RepositoryStorage {
 
