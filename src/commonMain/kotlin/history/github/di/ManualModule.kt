@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.http.HttpResponse
 import com.apollographql.apollo3.network.http.HttpInterceptor
 import com.apollographql.apollo3.network.http.HttpInterceptorChain
 import com.apollographql.apollo3.network.http.LoggingInterceptor
+import components.data.TeamHistoryConfig
 import history.github.GitHubDiscussionFetcher
 import history.github.GitHubHistory
 import history.github.GitHubPullRequestFetcher
@@ -24,7 +25,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import models.TeamHistoryConfig
 
 @Suppress("NO_ACTUAL_FOR_EXPECT") // IDEA bug, ignore
 expect fun provideHttpClientEngineFactory(): HttpClientEngineFactory<*>

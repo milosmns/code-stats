@@ -7,7 +7,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
-import models.TeamHistoryConfig
+import components.data.TeamHistoryConfig
 import okio.Path.Companion.toPath
 import kotlin.test.Test
 

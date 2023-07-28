@@ -12,11 +12,12 @@ import kotlin.test.Test
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import models.CodeReview
-import models.CodeReview.Change
-import models.CodeReview.Feedback
-import models.Discussion
-import models.User
+import components.data.CodeReview
+import components.data.CodeReview.Change
+import components.data.CodeReview.Feedback
+import components.data.Discussion
+import components.data.Repository
+import components.data.User
 
 class ToGenericMappingsTest {
 
@@ -106,7 +107,7 @@ class ToGenericMappingsTest {
     login = "octocat",
   )
 
-  private fun genericRepository() = models.Repository(
+  private fun genericRepository() = Repository(
     owner = "Repository owner",
     name = "Repository name",
     codeReviews = listOf(genericCodeReview()),

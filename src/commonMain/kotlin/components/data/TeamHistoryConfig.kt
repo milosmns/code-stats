@@ -1,4 +1,4 @@
-package models
+package components.data
 
 import getLastMondayAsLocal
 import kotlinx.datetime.DateTimeUnit

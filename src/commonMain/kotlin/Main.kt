@@ -1,10 +1,10 @@
+import components.data.Repository
+import components.data.TeamHistoryConfig
 import history.TeamHistory
 import history.github.di.provideGitHubHistory
 import history.github.di.provideGitHubHistoryConfig
 import history.storage.di.provideStoredHistory
 import kotlinx.coroutines.runBlocking
-import models.Repository
-import models.TeamHistoryConfig
 
 fun main(): Unit = runBlocking {
   println("\n== Code Stats CLI ==\n")

@@ -1,9 +1,9 @@
 package history
 
-import models.CodeReview
-import models.Discussion
-import models.Repository
-import models.TeamHistoryConfig
+import components.data.CodeReview
+import components.data.Discussion
+import components.data.Repository
+import components.data.TeamHistoryConfig
 import okio.Closeable
 
 interface TeamHistory : Closeable {
