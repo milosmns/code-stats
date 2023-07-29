@@ -7,8 +7,10 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.decodeFromString
 import net.mamoe.yamlkt.Yaml
@@ -47,6 +49,9 @@ fun TeamHistoryConfig.Companion.fromFile(path: String): TeamHistoryConfig {
     throw IllegalArgumentException("Could not load config file ($path)", e)
   }
 }
+
+val LocalDateTime.epochMillisecondsUtc: Long
+  get() = toInstant(TimeZone.UTC).toEpochMilliseconds()
 
 private fun TeamHistoryConfig.sorted() = copy(
   teams = teams.sortedBy { it.name }
