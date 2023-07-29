@@ -3,7 +3,7 @@ package calculator
 import components.data.CodeReview
 import components.data.Repository
 import components.metrics.CycleTime
-import epochMillisecondsUtc
+import utils.epochMillisecondsUtc
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 

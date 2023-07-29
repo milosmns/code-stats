@@ -1,6 +1,6 @@
 package history.github.config
 
-import readEnvVar
+import utils.readEnvVar
 
 data class GitHubHistoryConfig(
   val baseRestUrl: String =

@@ -1,3 +1,5 @@
+package utils
+
 import components.data.TeamHistoryConfig
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

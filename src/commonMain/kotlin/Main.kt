@@ -5,6 +5,7 @@ import history.github.di.provideGitHubHistory
 import history.github.di.provideGitHubHistoryConfig
 import history.storage.di.provideStoredHistory
 import kotlinx.coroutines.runBlocking
+import utils.fromFile
 
 fun main(): Unit = runBlocking {
   println("\n== Code Stats CLI ==\n")
