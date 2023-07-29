@@ -355,7 +355,7 @@ object OS {
 object Out {
   val group = OS.env("PROJECT_GROUP", default = "xyz.marinkovic.milos")
   val artifact = OS.env("PROJECT_ARTIFACT", default = "codestats")
-  val version = OS.env("PROJECT_VERSION", default = "0.2.0")
+  val version = OS.env("PROJECT_VERSION", default = "0.3.0")
   val repoOwner = OS.env("REPO_OWNER", default = "milosmns")
   val repoName = OS.env("REPO_NAME", default = "code-stats")
 

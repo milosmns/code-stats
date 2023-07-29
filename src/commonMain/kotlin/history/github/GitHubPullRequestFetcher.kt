@@ -1,7 +1,8 @@
 package history.github
 
-import Printable
-import PrintableLn
+import utils.Printable
+import utils.PrintableLn
+import components.data.TeamHistoryConfig
 import history.github.config.GitHubHistoryConfig
 import history.github.models.GitHubPullRequest
 import io.ktor.client.HttpClient
@@ -9,10 +10,9 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.delay
-import models.TeamHistoryConfig
-import parallelMap
-import printable
-import printableLn
+import utils.parallelMap
+import utils.printable
+import utils.printableLn
 
 class GitHubPullRequestFetcher(
   private val repository: String,

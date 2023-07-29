@@ -8,11 +8,11 @@ import codestats.Discussion as DatabaseDiscussion
 import codestats.DiscussionComment as DatabaseDiscussionComment
 import codestats.Repository as DatabaseRepository
 import codestats.User as DatabaseUser
+import components.data.CodeReview
+import components.data.Discussion
+import components.data.Repository
+import components.data.User
 import kotlinx.datetime.LocalDateTime
-import models.CodeReview
-import models.Discussion
-import models.Repository
-import models.User
 
 fun DatabaseRepository.toGeneric(): Repository =
   Repository(
@@ -53,7 +53,6 @@ fun DatabaseCodeReview.toGeneric(): CodeReview =
     body = body,
     requestedReviewers = reviewers_csv.split(",").filter { it.isNotBlank() }.map(::User),
     isDraft = is_draft == 1L,
-    changedFiles = changed_files.toInt(),
     createdAt = LocalDateTime.parse(created_at),
     closedAt = closed_at?.let(LocalDateTime.Companion::parse),
     mergedAt = merged_at?.let(LocalDateTime.Companion::parse),

@@ -2,10 +2,10 @@ package history.storage.di
 
 import app.cash.sqldelight.db.SqlDriver
 import codestats.codestats
+import components.data.TeamHistoryConfig
 import history.storage.StoredHistory
 import history.storage.config.StorageConfig
 import kotlinx.coroutines.runBlocking
-import models.TeamHistoryConfig
 
 expect fun provideSqlDriver(databaseLocation: String): SqlDriver
 
