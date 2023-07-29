@@ -4,6 +4,24 @@ import components.data.CodeReview
 import components.data.Discussion
 import components.data.Repository
 
+val Long.durationString: String
+  get() = buildString {
+    val millis = this@durationString
+    val secs = millis / 1000
+    val mins = secs / 60
+    val hours = mins / 60
+    val days = hours / 24
+    val months = days / 30
+    val years = months / 12
+    if (years > 0) append("${years}Y")
+    if (months > 0) append("${months % 12}M")
+    if (days > 0) append("${days % 30}d")
+    if (hours > 0) append("${hours % 24}h")
+    if (mins > 0) append("${mins % 60}m")
+    if (secs > 0) append("${secs % 60}s")
+    if (millis > 0) append("${millis % 1000}ms")
+  }
+
 class Printable(private val content: String) {
   fun onlyIf(condition: Boolean) = if (condition) print(content) else Unit
 }

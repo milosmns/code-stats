@@ -3,13 +3,10 @@ package calculator
 import components.data.CodeReview
 import components.data.Repository
 import components.metrics.CycleTime
-import utils.epochMillisecondsUtc
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import utils.epochMillisecondsUtc
 
-class CycleTimeCalculator(
-  private val now: Instant = Clock.System.now(),
-) {
+class CycleTimeCalculator(private val now: Instant) {
 
   fun calculate(repositories: List<Repository>): CycleTime {
     val perUser = repositories

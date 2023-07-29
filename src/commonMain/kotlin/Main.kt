@@ -1,10 +1,13 @@
+import calculator.di.provideCycleTimeCalculator
 import components.data.Repository
 import components.data.TeamHistoryConfig
 import history.TeamHistory
 import history.github.di.provideGitHubHistory
 import history.github.di.provideGitHubHistoryConfig
 import history.storage.di.provideStoredHistory
+import kotlin.math.roundToLong
 import kotlinx.coroutines.runBlocking
+import utils.durationString
 import utils.fromFile
 
 fun main(): Unit = runBlocking {
@@ -37,6 +40,7 @@ fun main(): Unit = runBlocking {
 
     // STORAGE EXPERIMENTS
     val storage = provideStoredHistory(teamHistoryConfig)
+    storage.purgeAll()
     val storedUnsorted = mutableListOf<Repository>()
     val fetched = fetchedUnsorted.sorted()
     fetched.forEach {
@@ -47,12 +51,19 @@ fun main(): Unit = runBlocking {
         includeDiscussions = true,
       )
     }
-
-    // COMPARISON EXPERIMENTS
     val stored = storedUnsorted.sorted()
-    println("EQUAL ALL = " + (stored == fetched))
+
+    // OTHER EXPERIMENTS
+    val cycleTimeCalculator = provideCycleTimeCalculator()
+    val cycleTime = cycleTimeCalculator.calculate(stored)
+    println("== CYCLE TIME ==")
+    println("Average per author: ${cycleTime.averagePerAuthor.roundToLong().durationString}")
+    println("Average per reviewer: ${cycleTime.averagePerReviewer.roundToLong().durationString}")
+    println("Average per codeReview: ${cycleTime.averagePerCodeReview.roundToLong().durationString}")
+    println("Average per repository: ${cycleTime.averagePerRepository.roundToLong().durationString}")
+    println("-- CYCLE TIME --")
   } catch (e: Throwable) {
-    println("CRITICAL FAILURE · ${e.message}")
+    println("CRITICAL FAILURE! \n\n * ${e.message} * \n\n")
     e.printStackTrace()
   } finally {
     history.close()

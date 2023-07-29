@@ -71,6 +71,17 @@ class StoredHistory(
     }
   }
 
+  fun purgeAll() {
+    purgeCodeReviewFeedbacks()
+    purgeCodeReviewChanges()
+    purgeCodeReviewComments()
+    purgeCodeReviews()
+    purgeDiscussionComments()
+    purgeDiscussions()
+    purgeUsers()
+    purgeRepositories()
+  }
+
   private val Repository.allUsers: Set<User>
     get() {
       val users = mutableSetOf<User>()
