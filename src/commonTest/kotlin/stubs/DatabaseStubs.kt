@@ -50,7 +50,6 @@ object DatabaseStubs {
     author_login = user.login,
     reviewers_csv = user.login,
     is_draft = 1,
-    changed_files = 3,
     created_at = "2023-04-01T15:45",
     merged_at = "2023-06-01T15:45",
     closed_at = "2023-07-01T15:45",

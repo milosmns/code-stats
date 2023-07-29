@@ -17,7 +17,6 @@ data class GitHubPullRequest(
   @SerialName("user") val author: GitHubUser,
   @SerialName("requested_reviewers") val requestedReviewers: List<GitHubUser> = emptyList(),
   @SerialName("draft") val isDraft: Boolean,
-  @SerialName("changed_files") val changedFiles: Int = 0,
   @SerialName("all_comments") val comments: List<Comment> = emptyList(),
   @SerialName("all_changes") val files: List<File> = emptyList(),
   @SerialName("all_reviews") val reviews: List<Review> = emptyList(),

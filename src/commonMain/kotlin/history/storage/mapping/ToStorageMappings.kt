@@ -54,7 +54,6 @@ fun CodeReview.toStorage(repoOwner: String, repoName: String): DatabaseCodeRevie
     body = body,
     reviewers_csv = requestedReviewers.joinToString(",") { it.login },
     is_draft = if (isDraft) 1 else 0,
-    changed_files = changedFiles.toLong(),
     created_at = createdAt.toString(),
     closed_at = closedAt?.toString(),
     merged_at = mergedAt?.toString(),

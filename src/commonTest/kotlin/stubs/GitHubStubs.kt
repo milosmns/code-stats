@@ -78,7 +78,6 @@ object GitHubStubs {
     author = user,
     requestedReviewers = listOf(user),
     isDraft = true,
-    changedFiles = 3,
     comments = listOf(pullRequestComment),
     files = listOf(pullRequestFile),
     reviews = listOf(pullRequestReview),

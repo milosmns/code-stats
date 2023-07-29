@@ -53,7 +53,6 @@ fun DatabaseCodeReview.toGeneric(): CodeReview =
     body = body,
     requestedReviewers = reviewers_csv.split(",").filter { it.isNotBlank() }.map(::User),
     isDraft = is_draft == 1L,
-    changedFiles = changed_files.toInt(),
     createdAt = LocalDateTime.parse(created_at),
     closedAt = closed_at?.let(LocalDateTime.Companion::parse),
     mergedAt = merged_at?.let(LocalDateTime.Companion::parse),

@@ -100,7 +100,6 @@ fun GitHubPullRequest.toGeneric(): GenericCodeReview =
     author = author.toGeneric(),
     requestedReviewers = requestedReviewers.map(GitHubUser::toGeneric),
     isDraft = isDraft,
-    changedFiles = changedFiles,
     comments = comments.map(GitHubPullRequest.Comment::toGeneric),
     changes = files.map(File::toGeneric),
     feedbacks = reviews.map(Review::toGeneric),
