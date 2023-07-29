@@ -1,7 +1,9 @@
 package history.github
 
-import PrintableLn
+import utils.PrintableLn
 import com.apollographql.apollo3.ApolloClient
+import components.data.Repository
+import components.data.TeamHistoryConfig
 import history.TeamHistory
 import history.github.config.GitHubHistoryConfig
 import history.github.di.provideDiscussionFetcherFor
@@ -12,9 +14,7 @@ import history.github.models.GitHubPullRequest
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import models.Repository
-import models.TeamHistoryConfig
-import printableLn
+import utils.printableLn
 
 class GitHubHistory(
   override val teamHistoryConfig: TeamHistoryConfig,

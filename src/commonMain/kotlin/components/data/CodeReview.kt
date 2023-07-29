@@ -1,4 +1,4 @@
-package models
+package components.data
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable

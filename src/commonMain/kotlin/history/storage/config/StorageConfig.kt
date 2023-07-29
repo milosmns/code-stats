@@ -1,6 +1,6 @@
 package history.storage.config
 
-import readEnvVar
+import utils.readEnvVar
 
 data class StorageConfig(
   val databasePath: String =

@@ -1,7 +1,7 @@
 package history.github
 
-import Printable
-import PrintableLn
+import utils.Printable
+import utils.PrintableLn
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.github.graphql.GetDiscussionCommentsPageQuery
@@ -10,15 +10,15 @@ import com.github.graphql.GetDiscussionsPageQuery
 import com.github.graphql.type.DiscussionOrder
 import com.github.graphql.type.DiscussionOrderField
 import com.github.graphql.type.OrderDirection
+import components.data.TeamHistoryConfig
 import history.github.config.GitHubHistoryConfig
 import history.github.mapping.toGitHubDiscussion
 import history.github.mapping.withRepliesToGitHubComments
 import history.github.models.GitHubDiscussion
 import kotlinx.coroutines.delay
-import models.TeamHistoryConfig
-import parallelMap
-import printable
-import printableLn
+import utils.parallelMap
+import utils.printable
+import utils.printableLn
 
 class GitHubDiscussionFetcher(
   private val repository: String,

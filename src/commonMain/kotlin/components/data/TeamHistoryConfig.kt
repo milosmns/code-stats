@@ -1,6 +1,6 @@
-package models
+package components.data
 
-import getLastMondayAsLocal
+import utils.getLastMondayAsLocal
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
