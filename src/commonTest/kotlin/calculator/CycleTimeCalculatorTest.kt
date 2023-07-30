@@ -1,14 +1,15 @@
 package calculator
 
 import assertk.assertThat
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import components.data.Repository
 import components.data.User
-import kotlin.test.Test
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import stubs.Stubs
+import kotlin.test.Test
 
 class CycleTimeCalculatorTest {
 
@@ -41,6 +42,12 @@ class CycleTimeCalculatorTest {
     assertThat(cycleTimePerCodeReview[fastRepo.codeReviews[1]]).isEqualTo(2.hours)
     assertThat(cycleTimePerCodeReview[fastRepo.codeReviews[2]]).isEqualTo(3.hours)
     assertThat(cycleTimePerCodeReview[fastRepo.codeReviews[3]]).isEqualTo(1.hours)
+  }
+
+  @Test fun `cycle time calculation does not include discussions`() {
+    val cycleTimePerDiscussion = calculate().perDiscussion
+
+    assertThat(cycleTimePerDiscussion).isEmpty()
   }
 
   @Test fun `cycle time calculation is correct per repository`() {
