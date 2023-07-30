@@ -51,7 +51,6 @@ CREATE TABLE IF NOT EXISTS CodeReview
   body          TEXT    NOT NULL,
   reviewers_csv TEXT    NOT NULL,
   is_draft      INTEGER NOT NULL,
-  changed_files INTEGER NOT NULL,
   created_at    TEXT    NOT NULL,
   closed_at     TEXT,
   merged_at     TEXT,

@@ -1,9 +1,9 @@
-package history.storage
+package history.storage.sqlite
 
 import codestats.codestats
+import components.data.TeamHistoryConfig
+import components.data.User
 import history.storage.mapping.toStorage
-import models.TeamHistoryConfig
-import models.User
 
 interface UserStorage {
 

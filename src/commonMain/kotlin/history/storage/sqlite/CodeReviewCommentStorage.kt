@@ -1,11 +1,11 @@
-package history.storage
+package history.storage.sqlite
 
 import codestats.CodeReviewComment as DatabaseCodeReviewComment
 import codestats.codestats
+import components.data.CodeReview
+import components.data.TeamHistoryConfig
 import history.storage.mapping.toGeneric
 import history.storage.mapping.toStorage
-import models.CodeReview
-import models.TeamHistoryConfig
 
 interface CodeReviewCommentStorage {
 

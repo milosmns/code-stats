@@ -1,17 +1,17 @@
 package history.github.mapping
 
-import models.CodeReview as GenericCodeReview
-import models.Discussion as GenericDiscussion
-import models.Repository as GenericRepository
-import models.User as GenericUser
+import components.data.CodeReview as GenericCodeReview
+import components.data.Discussion as GenericDiscussion
+import components.data.Repository as GenericRepository
+import components.data.User as GenericUser
+import components.data.CodeReview.Change
+import components.data.CodeReview.Feedback
 import history.github.models.GitHubDiscussion
 import history.github.models.GitHubPullRequest
 import history.github.models.GitHubPullRequest.File
 import history.github.models.GitHubPullRequest.Review
 import history.github.models.GitHubRepository
 import history.github.models.GitHubUser
-import models.CodeReview.Change
-import models.CodeReview.Feedback
 
 fun GitHubUser.toGeneric(): GenericUser =
   GenericUser(
@@ -100,7 +100,6 @@ fun GitHubPullRequest.toGeneric(): GenericCodeReview =
     author = author.toGeneric(),
     requestedReviewers = requestedReviewers.map(GitHubUser::toGeneric),
     isDraft = isDraft,
-    changedFiles = changedFiles,
     comments = comments.map(GitHubPullRequest.Comment::toGeneric),
     changes = files.map(File::toGeneric),
     feedbacks = reviews.map(Review::toGeneric),

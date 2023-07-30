@@ -8,10 +8,10 @@ import codestats.Discussion as DatabaseDiscussion
 import codestats.DiscussionComment as DatabaseDiscussionComment
 import codestats.Repository as DatabaseRepository
 import codestats.User as DatabaseUser
-import models.CodeReview
-import models.Discussion
-import models.Repository
-import models.User
+import components.data.CodeReview
+import components.data.Discussion
+import components.data.Repository
+import components.data.User
 
 fun Repository.toStorage(): DatabaseRepository =
   DatabaseRepository(
@@ -54,7 +54,6 @@ fun CodeReview.toStorage(repoOwner: String, repoName: String): DatabaseCodeRevie
     body = body,
     reviewers_csv = requestedReviewers.joinToString(",") { it.login },
     is_draft = if (isDraft) 1 else 0,
-    changed_files = changedFiles.toLong(),
     created_at = createdAt.toString(),
     closed_at = closedAt?.toString(),
     merged_at = mergedAt?.toString(),
