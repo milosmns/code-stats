@@ -31,6 +31,16 @@ suspend inline fun <Input, Output> Iterable<Input>.parallelMap(
   }.awaitAll()
 }
 
+fun <K, V : Comparable<V>> Map<K, V>.getTop(n: Int = 1): List<Pair<K, V>> =
+  toList()
+    .sortedByDescending { (_, value) -> value }
+    .take(n)
+
+fun <K, V : Comparable<V>> Map<K, V>.getBottom(n: Int = 1): List<Pair<K, V>> =
+  toList()
+    .sortedByDescending { (_, value) -> value }
+    .takeLast(n)
+
 fun getLastMondayAsLocal(now: Instant = Clock.System.now()): LocalDate {
   val timeZone = TimeZone.currentSystemDefault()
   val today = now.toLocalDateTime(timeZone).date
