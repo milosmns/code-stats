@@ -38,8 +38,9 @@ class CycleTimeCalculator(private val now: Instant) {
 
     return CycleTime(
       perAuthor = perUser,
-      perCodeReview = perCodeReview,
       perReviewer = perReviewer,
+      perCodeReview = perCodeReview,
+      perDiscussion = emptyMap(),
       perRepository = perRepository,
     )
   }
