@@ -1,9 +1,11 @@
 package stubs
 
 import components.data.CodeReview
-import components.data.CodeReview.Change
-import components.data.CodeReview.Feedback
+import components.data.CodeReviewChange
+import components.data.CodeReviewFeedback
+import components.data.CodeReviewComment
 import components.data.Discussion
+import components.data.DiscussionComment
 import components.data.Repository
 import components.data.User
 import kotlinx.datetime.LocalDateTime
@@ -14,7 +16,7 @@ object GenericStubs {
     login = "octocat",
   )
 
-  val discussionComment = Discussion.Comment(
+  val discussionComment = DiscussionComment(
     id = "1234",
     body = "Comment body",
     createdAt = LocalDateTime(2023, 4, 1, 15, 45, 0, 0),
@@ -43,25 +45,25 @@ object GenericStubs {
     comments = listOf(discussionComment),
   )
 
-  val codeReviewComment = CodeReview.Comment(
+  val codeReviewComment = CodeReviewComment(
     id = 1236,
     body = "Comment body",
     createdAt = LocalDateTime(2023, 4, 1, 15, 45, 0, 0),
     author = user,
   )
 
-  val codeReviewChange = Change(
-    status = Change.Status.ADDED,
+  val codeReviewChange = CodeReviewChange(
+    status = CodeReviewChange.Status.ADDED,
     additions = 1,
     deletions = 2,
     total = 3,
     fileName = "file.txt",
   )
 
-  val codeReviewFeedback = Feedback(
+  val codeReviewFeedback = CodeReviewFeedback(
     id = 1237,
     body = "Review body",
-    state = Feedback.State.APPROVED,
+    state = CodeReviewFeedback.State.APPROVED,
     submittedAt = LocalDateTime(2023, 5, 1, 15, 45, 0, 0),
     author = user,
   )

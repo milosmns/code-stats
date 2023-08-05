@@ -1,8 +1,8 @@
 package stubs
 
-import components.data.CodeReview.Change.Status.ADDED
-import components.data.CodeReview.Change.Status.MODIFIED
-import components.data.CodeReview.Change.Status.REMOVED
+import components.data.CodeReviewChange.Status.ADDED
+import components.data.CodeReviewChange.Status.MODIFIED
+import components.data.CodeReviewChange.Status.REMOVED
 import components.data.Repository
 import components.data.User
 import components.metrics.GenericLongMetric

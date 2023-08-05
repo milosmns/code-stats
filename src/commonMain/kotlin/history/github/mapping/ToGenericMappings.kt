@@ -4,8 +4,10 @@ import components.data.CodeReview as GenericCodeReview
 import components.data.Discussion as GenericDiscussion
 import components.data.Repository as GenericRepository
 import components.data.User as GenericUser
-import components.data.CodeReview.Change
-import components.data.CodeReview.Feedback
+import components.data.CodeReviewChange
+import components.data.CodeReviewFeedback
+import components.data.CodeReviewComment
+import components.data.DiscussionComment
 import history.github.models.GitHubDiscussion
 import history.github.models.GitHubPullRequest
 import history.github.models.GitHubPullRequest.File
@@ -18,8 +20,8 @@ fun GitHubUser.toGeneric(): GenericUser =
     login = login,
   )
 
-fun GitHubDiscussion.Comment.toGeneric(): GenericDiscussion.Comment =
-  GenericDiscussion.Comment(
+fun GitHubDiscussion.Comment.toGeneric(): DiscussionComment =
+  DiscussionComment(
     id = id,
     body = body,
     createdAt = createdAt,
@@ -44,19 +46,19 @@ fun GitHubPullRequest.State.toGeneric(): GenericCodeReview.State =
     GitHubPullRequest.State.CLOSED -> GenericCodeReview.State.CLOSED
   }
 
-fun File.Status.toGeneric(): Change.Status =
+fun File.Status.toGeneric(): CodeReviewChange.Status =
   when (this) {
-    File.Status.ADDED -> Change.Status.ADDED
-    File.Status.MODIFIED -> Change.Status.MODIFIED
-    File.Status.REMOVED -> Change.Status.REMOVED
-    File.Status.RENAMED -> Change.Status.RENAMED
-    File.Status.COPIED -> Change.Status.COPIED
-    File.Status.CHANGED -> Change.Status.CHANGED
-    File.Status.UNCHANGED -> Change.Status.UNCHANGED
+    File.Status.ADDED -> CodeReviewChange.Status.ADDED
+    File.Status.MODIFIED -> CodeReviewChange.Status.MODIFIED
+    File.Status.REMOVED -> CodeReviewChange.Status.REMOVED
+    File.Status.RENAMED -> CodeReviewChange.Status.RENAMED
+    File.Status.COPIED -> CodeReviewChange.Status.COPIED
+    File.Status.CHANGED -> CodeReviewChange.Status.CHANGED
+    File.Status.UNCHANGED -> CodeReviewChange.Status.UNCHANGED
   }
 
-fun File.toGeneric(): Change =
-  Change(
+fun File.toGeneric(): CodeReviewChange =
+  CodeReviewChange(
     status = status.toGeneric(),
     additions = additions,
     deletions = deletions,
@@ -64,17 +66,17 @@ fun File.toGeneric(): Change =
     fileName = fileName,
   )
 
-fun Review.State.toGeneric(): Feedback.State =
+fun Review.State.toGeneric(): CodeReviewFeedback.State =
   when (this) {
-    Review.State.PENDING -> Feedback.State.PENDING
-    Review.State.APPROVED -> Feedback.State.APPROVED
-    Review.State.COMMENTED -> Feedback.State.COMMENTED
-    Review.State.CHANGES_REQUESTED -> Feedback.State.CHANGES_REQUESTED
-    Review.State.DISMISSED -> Feedback.State.DISMISSED
+    Review.State.PENDING -> CodeReviewFeedback.State.PENDING
+    Review.State.APPROVED -> CodeReviewFeedback.State.APPROVED
+    Review.State.COMMENTED -> CodeReviewFeedback.State.COMMENTED
+    Review.State.CHANGES_REQUESTED -> CodeReviewFeedback.State.CHANGES_REQUESTED
+    Review.State.DISMISSED -> CodeReviewFeedback.State.DISMISSED
   }
 
-fun Review.toGeneric(): Feedback =
-  Feedback(
+fun Review.toGeneric(): CodeReviewFeedback =
+  CodeReviewFeedback(
     id = id,
     body = body,
     state = state.toGeneric(),
@@ -82,8 +84,8 @@ fun Review.toGeneric(): Feedback =
     submittedAt = submittedAt,
   )
 
-fun GitHubPullRequest.Comment.toGeneric(): GenericCodeReview.Comment =
-  GenericCodeReview.Comment(
+fun GitHubPullRequest.Comment.toGeneric(): CodeReviewComment =
+  CodeReviewComment(
     id = id,
     body = body,
     createdAt = createdAt,
