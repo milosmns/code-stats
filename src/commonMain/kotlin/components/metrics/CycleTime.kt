@@ -9,8 +9,8 @@ data class CycleTime(
   override val perAuthor: Map<User, Long>,
   override val perReviewer: Map<User, Long>,
   override val perCodeReview: Map<CodeReview, Long>,
-  override val perDiscussion: Map<Discussion, Long>,
   override val perRepository: Map<Repository, Long>,
+  override val perDiscussion: Map<Discussion, Long> = emptyMap(),
 ) : GenericLongMetric {
 
   override val metricName = "Cycle Time"
