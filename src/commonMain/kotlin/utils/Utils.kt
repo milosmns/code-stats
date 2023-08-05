@@ -65,6 +65,12 @@ fun TeamHistoryConfig.Companion.fromFile(path: String): TeamHistoryConfig {
 val LocalDateTime.epochMillisecondsUtc: Long
   get() = toInstant(TimeZone.UTC).toEpochMilliseconds()
 
+val Int.days: Long
+  get() = this * 24.hours
+
+val Int.hours: Long
+  get() = toLong() * 60 * 60 * 1000
+
 private fun TeamHistoryConfig.sorted() = copy(
   teams = teams.sortedBy { it.name }
     .map { team ->
