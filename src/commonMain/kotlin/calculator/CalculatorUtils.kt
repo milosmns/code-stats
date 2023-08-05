@@ -1,7 +1,7 @@
 package calculator
 
 import components.data.CodeReview
-import components.data.CodeReview.Change.Status
+import components.data.CodeReviewChange.Status
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import utils.epochMillisecondsUtc

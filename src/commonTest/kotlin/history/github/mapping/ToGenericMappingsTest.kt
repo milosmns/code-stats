@@ -3,8 +3,8 @@ package history.github.mapping
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import components.data.CodeReview
-import components.data.CodeReview.Change
-import components.data.CodeReview.Feedback
+import components.data.CodeReviewChange
+import components.data.CodeReviewFeedback
 import history.github.models.GitHubPullRequest
 import history.github.models.GitHubPullRequest.File
 import history.github.models.GitHubPullRequest.Review
@@ -43,7 +43,7 @@ class ToGenericMappingsTest {
 
   @Test fun `GitHub pull request file status to generic change status`() {
     val results = File.Status.values().map(File.Status::toGeneric)
-    val expected = Change.Status.values().toList()
+    val expected = CodeReviewChange.Status.values().toList()
 
     assertThat(results).isEqualTo(expected)
   }
@@ -57,7 +57,7 @@ class ToGenericMappingsTest {
 
   @Test fun `GitHub review state to generic feedback state`() {
     val results = Review.State.values().map(Review.State::toGeneric)
-    val expected = Feedback.State.values().toList()
+    val expected = CodeReviewFeedback.State.values().toList()
 
     assertThat(results)
       .isEqualTo(expected)

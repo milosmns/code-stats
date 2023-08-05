@@ -9,7 +9,11 @@ import codestats.DiscussionComment as DatabaseDiscussionComment
 import codestats.Repository as DatabaseRepository
 import codestats.User as DatabaseUser
 import components.data.CodeReview
+import components.data.CodeReviewChange
+import components.data.CodeReviewComment
+import components.data.CodeReviewFeedback
 import components.data.Discussion
+import components.data.DiscussionComment
 import components.data.Repository
 import components.data.User
 
@@ -34,7 +38,7 @@ fun Discussion.toStorage(repoOwner: String, repoName: String): DatabaseDiscussio
     repo_name = repoName,
   )
 
-fun Discussion.Comment.toStorage(repoOwner: String, repoName: String, parentId: String): DatabaseDiscussionComment =
+fun DiscussionComment.toStorage(repoOwner: String, repoName: String, parentId: String): DatabaseDiscussionComment =
   DatabaseDiscussionComment(
     id = id,
     body = body,
@@ -62,7 +66,7 @@ fun CodeReview.toStorage(repoOwner: String, repoName: String): DatabaseCodeRevie
     repo_name = repoName,
   )
 
-fun CodeReview.Comment.toStorage(repoOwner: String, repoName: String, parentId: Long): DatabaseCodeReviewComment =
+fun CodeReviewComment.toStorage(repoOwner: String, repoName: String, parentId: Long): DatabaseCodeReviewComment =
   DatabaseCodeReviewComment(
     id = id,
     body = body,
@@ -73,7 +77,7 @@ fun CodeReview.Comment.toStorage(repoOwner: String, repoName: String, parentId: 
     repo_name = repoName,
   )
 
-fun CodeReview.Change.toStorage(repoOwner: String, repoName: String, parentId: Long): DatabaseCodeReviewChange =
+fun CodeReviewChange.toStorage(repoOwner: String, repoName: String, parentId: Long): DatabaseCodeReviewChange =
   DatabaseCodeReviewChange(
     status = status.name,
     additions = additions.toLong(),
@@ -85,7 +89,7 @@ fun CodeReview.Change.toStorage(repoOwner: String, repoName: String, parentId: L
     repo_name = repoName,
   )
 
-fun CodeReview.Feedback.toStorage(repoOwner: String, repoName: String, parentId: Long): DatabaseCodeReviewFeedback =
+fun CodeReviewFeedback.toStorage(repoOwner: String, repoName: String, parentId: Long): DatabaseCodeReviewFeedback =
   DatabaseCodeReviewFeedback(
     id = id,
     body = body,

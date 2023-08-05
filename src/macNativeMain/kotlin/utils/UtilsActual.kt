@@ -1,5 +1,6 @@
 package utils
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKString
 import okio.Buffer
 import okio.FileSystem
@@ -14,4 +15,5 @@ actual fun loadFileAsString(configPath: Path): String = Buffer().apply {
   }
 }.readUtf8()
 
+@OptIn(ExperimentalForeignApi::class)
 actual fun readEnvVar(name: String): String? = getenv(name)?.toKString()
