@@ -194,6 +194,61 @@ object MetricsStubs {
   )
   // endregion Code Review Change Repos
 
+  // region Code Review Comment Repos
+  val codeReviewCommentRepo1 = Repository(
+    owner = "Repo1 owner",
+    name = "Repo1 name",
+    discussions = emptyList(),
+    codeReviews = listOf(
+      Stubs.generic.codeReview.copy(
+        id = 1,
+        author = user1,
+        requestedReviewers = listOf(user2),
+        comments = 4.commentsBy(user1),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 2,
+        author = user1,
+        requestedReviewers = listOf(user2, user3),
+        comments = 2.commentsBy(user1) + 1.commentsBy(user2),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 3,
+        author = user2,
+        requestedReviewers = listOf(user1),
+        comments = 2.commentsBy(user2) + 1.commentsBy(user3),
+      ),
+    ),
+  )
+
+  val codeReviewCommentRepo2 = Repository(
+    owner = "Repo2 owner",
+    name = "Repo2 name",
+    discussions = emptyList(),
+    codeReviews = listOf(
+      Stubs.generic.codeReview.copy(
+        id = 4,
+        author = user1,
+        requestedReviewers = listOf(user2),
+        comments = 1.commentsBy(user1) + 1.commentsBy(user2),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 5,
+        author = user3,
+        requestedReviewers = listOf(user1),
+        comments = 4.commentsBy(user3),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 6,
+        author = user2,
+        requestedReviewers = listOf(user3),
+        comments = 3.commentsBy(user2),
+      ),
+    ),
+  )
+  // endregion Code Review Comment Repos
+
+  // region Utils
   private val Int.additions
     get() = List(this) {
       Stubs.generic.codeReviewChange.copy(
@@ -217,5 +272,10 @@ object MetricsStubs {
         status = REMOVED,
       )
     }
+
+  private fun Int.commentsBy(author: User) = List(this) {
+    Stubs.generic.codeReviewComment.copy(author = author)
+  }
+  // endregion Utils
 
 }

@@ -16,6 +16,7 @@ class CodeReviewChangesRemovedCalculator : GenericLongMetricCalculator<CodeRevie
     val perReviewer = repositories
       .flatMap { repository -> repository.codeReviews }
       .flatMap { codeReview -> codeReview.requestedReviewers }
+      .toSet()
       .associateWith { reviewer ->
         repositories
           .flatMap { repository -> repository.codeReviews }
