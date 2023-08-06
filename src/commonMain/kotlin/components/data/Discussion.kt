@@ -16,19 +16,9 @@ data class Discussion(
   val body: String,
   val createdAt: LocalDateTime,
   val closedAt: LocalDateTime?,
-  val comments: List<Comment>,
+  val comments: List<DiscussionComment>,
   val author: User,
 ) : HasSimpleFormat {
-
-  @Serializable
-  data class Comment(
-    val id: String,
-    val body: String,
-    val createdAt: LocalDateTime,
-    val author: User,
-  ) : HasSimpleFormat {
-    override val simpleFormat = "$author at $createdAt: \"${body.ellipsis()}\""
-  }
 
   private val lifetime = when {
     closedAt != null -> closedAt.epochMillisecondsUtc - createdAt.epochMillisecondsUtc
