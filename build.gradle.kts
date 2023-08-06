@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 
-// Kudos to @JMFayard for figuring out lots of KMP stuff!
-
 plugins {
   application
-  kotlin("multiplatform") version "1.8.+" // when replacing, search the whole file for "8"
-  kotlin("plugin.serialization") version "1.8.+"
+  kotlin("multiplatform") version "1.9.+" // when replacing, search the whole file for "8"
+  kotlin("plugin.serialization") version "1.9.+"
   id("com.apollographql.apollo3") version "4.+"
   id("com.github.johnrengelman.shadow") version "8.+"
   id("org.jlleitschuh.gradle.ktlint") version "11.+"
@@ -44,14 +42,14 @@ kotlin {
         implementation(kotlin("stdlib-common"))
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.+")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.+")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.+")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.+")
         implementation("io.ktor:ktor-client-core:2.3.+")
         implementation("io.ktor:ktor-client-auth:2.3.+")
         implementation("io.ktor:ktor-client-logging:2.3.+")
         implementation("io.ktor:ktor-client-serialization:2.3.+")
         implementation("io.ktor:ktor-client-content-negotiation:2.3.+")
         implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.+")
-        implementation("com.squareup.okio:okio:3.+")
+        implementation("com.squareup.okio:okio:3.4.+")
         implementation("net.mamoe.yamlkt:yamlkt:0.+")
         implementation("com.apollographql.apollo3:apollo-api:4.+")
         implementation("com.apollographql.apollo3:apollo-runtime:4.+")
@@ -62,7 +60,7 @@ kotlin {
       dependsOn(commonMain)
       dependencies {
         implementation(kotlin("test"))
-        implementation("com.squareup.okio:okio-fakefilesystem:3.+")
+        implementation("com.squareup.okio:okio-fakefilesystem:3.4.+")
         implementation("com.willowtreeapps.assertk:assertk:0.+")
       }
     }

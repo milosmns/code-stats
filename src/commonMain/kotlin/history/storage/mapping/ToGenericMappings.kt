@@ -9,7 +9,11 @@ import codestats.DiscussionComment as DatabaseDiscussionComment
 import codestats.Repository as DatabaseRepository
 import codestats.User as DatabaseUser
 import components.data.CodeReview
+import components.data.CodeReviewChange
+import components.data.CodeReviewComment
+import components.data.CodeReviewFeedback
 import components.data.Discussion
+import components.data.DiscussionComment
 import components.data.Repository
 import components.data.User
 import kotlinx.datetime.LocalDateTime
@@ -36,8 +40,8 @@ fun DatabaseDiscussion.toGeneric(): Discussion =
     comments = emptyList(),
   )
 
-fun DatabaseDiscussionComment.toGeneric(): Discussion.Comment =
-  Discussion.Comment(
+fun DatabaseDiscussionComment.toGeneric(): DiscussionComment =
+  DiscussionComment(
     id = id,
     body = body,
     createdAt = LocalDateTime.parse(created_at),
@@ -62,28 +66,28 @@ fun DatabaseCodeReview.toGeneric(): CodeReview =
     feedbacks = emptyList(),
   )
 
-fun DatabaseCodeReviewComment.toGeneric(): CodeReview.Comment =
-  CodeReview.Comment(
+fun DatabaseCodeReviewComment.toGeneric(): CodeReviewComment =
+  CodeReviewComment(
     id = id,
     body = body,
     createdAt = LocalDateTime.parse(created_at),
     author = User(author_login),
   )
 
-fun DatabaseCodeReviewChange.toGeneric(): CodeReview.Change =
-  CodeReview.Change(
-    status = CodeReview.Change.Status.valueOf(status),
+fun DatabaseCodeReviewChange.toGeneric(): CodeReviewChange =
+  CodeReviewChange(
+    status = CodeReviewChange.Status.valueOf(status),
     additions = additions.toInt(),
     deletions = deletions.toInt(),
     total = total.toInt(),
     fileName = file_name,
   )
 
-fun DatabaseCodeReviewFeedback.toGeneric(): CodeReview.Feedback =
-  CodeReview.Feedback(
+fun DatabaseCodeReviewFeedback.toGeneric(): CodeReviewFeedback =
+  CodeReviewFeedback(
     id = id,
     body = body,
-    state = CodeReview.Feedback.State.valueOf(state),
+    state = CodeReviewFeedback.State.valueOf(state),
     submittedAt = submitted_at?.let(LocalDateTime.Companion::parse),
     author = User(author_login),
   )

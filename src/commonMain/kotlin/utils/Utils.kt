@@ -31,6 +31,16 @@ suspend inline fun <Input, Output> Iterable<Input>.parallelMap(
   }.awaitAll()
 }
 
+fun <K, V : Comparable<V>> Map<K, V>.getTop(n: Int = 1): List<Pair<K, V>> =
+  toList()
+    .sortedByDescending { (_, value) -> value }
+    .take(n)
+
+fun <K, V : Comparable<V>> Map<K, V>.getBottom(n: Int = 1): List<Pair<K, V>> =
+  toList()
+    .sortedByDescending { (_, value) -> value }
+    .takeLast(n)
+
 fun getLastMondayAsLocal(now: Instant = Clock.System.now()): LocalDate {
   val timeZone = TimeZone.currentSystemDefault()
   val today = now.toLocalDateTime(timeZone).date
@@ -54,6 +64,12 @@ fun TeamHistoryConfig.Companion.fromFile(path: String): TeamHistoryConfig {
 
 val LocalDateTime.epochMillisecondsUtc: Long
   get() = toInstant(TimeZone.UTC).toEpochMilliseconds()
+
+val Int.days: Long
+  get() = this * 24.hours
+
+val Int.hours: Long
+  get() = toLong() * 60 * 60 * 1000
 
 private fun TeamHistoryConfig.sorted() = copy(
   teams = teams.sortedBy { it.name }
