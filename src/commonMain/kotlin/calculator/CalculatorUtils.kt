@@ -12,11 +12,11 @@ fun CodeReview.countChangesTotal(): Long = changes.size.toLong()
 private val addedStatuses = setOf(Status.ADDED, Status.COPIED)
 fun CodeReview.countChangesAdded(): Long = changes.count { it.status in addedStatuses }.toLong()
 
-private val removedStatuses = setOf(Status.REMOVED)
-fun CodeReview.countChangesRemoved(): Long = changes.count { it.status in removedStatuses }.toLong()
-
 private val changedStatuses = setOf(Status.MODIFIED, Status.RENAMED, Status.CHANGED)
 fun CodeReview.countChangesModified(): Long = changes.count { it.status in changedStatuses }.toLong()
+
+private val removedStatuses = setOf(Status.REMOVED)
+fun CodeReview.countChangesRemoved(): Long = changes.count { it.status in removedStatuses }.toLong()
 // endregion Files
 
 // region Lines
