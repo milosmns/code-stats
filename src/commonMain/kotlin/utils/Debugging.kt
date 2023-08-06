@@ -1,7 +1,10 @@
 package utils
 
 import components.data.CodeReview
+import components.data.CodeReviewComment
+import components.data.CodeReviewFeedback
 import components.data.Discussion
+import components.data.DiscussionComment
 import components.data.Repository
 
 val Long.durationString: String
@@ -50,27 +53,27 @@ fun String.truncateMiddle(): String {
   return cleaned.substring(0, 4).trim() + "..." + cleaned.substring(cleaned.length - 5).trim()
 }
 
-fun CodeReview.Comment.truncate() = copy(
+fun CodeReviewComment.truncate() = copy(
   body = body.truncateMiddle(),
 )
 
-fun CodeReview.Feedback.truncate() = copy(
+fun CodeReviewFeedback.truncate() = copy(
   body = body.truncateMiddle(),
 )
 
 fun CodeReview.truncate() = copy(
   body = body.truncateMiddle(),
-  comments = comments.map(CodeReview.Comment::truncate),
-  feedbacks = feedbacks.map(CodeReview.Feedback::truncate),
+  comments = comments.map(CodeReviewComment::truncate),
+  feedbacks = feedbacks.map(CodeReviewFeedback::truncate),
 )
 
-fun Discussion.Comment.truncate() = copy(
+fun DiscussionComment.truncate() = copy(
   body = body.truncateMiddle(),
 )
 
 fun Discussion.truncate() = copy(
   body = body.truncateMiddle(),
-  comments = comments.map(Discussion.Comment::truncate),
+  comments = comments.map(DiscussionComment::truncate),
 )
 
 fun Repository.truncate() = copy(

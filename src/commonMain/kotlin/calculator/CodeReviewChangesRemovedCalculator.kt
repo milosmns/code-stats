@@ -1,17 +1,16 @@
 package calculator
 
 import components.data.Repository
-import components.metrics.CycleTime
-import kotlinx.datetime.Instant
+import components.metrics.CodeReviewChangesRemoved
 
-class CycleTimeCalculator(private val now: Instant) : GenericLongMetricCalculator<CycleTime> {
+class CodeReviewChangesRemovedCalculator : GenericLongMetricCalculator<CodeReviewChangesRemoved> {
 
-  override fun calculate(repositories: List<Repository>): CycleTime {
+  override fun calculate(repositories: List<Repository>): CodeReviewChangesRemoved {
     val perUser = repositories
       .flatMap { repository -> repository.codeReviews }
       .groupBy { codeReview -> codeReview.author }
       .mapValues { (_, codeReviews) ->
-        codeReviews.sumOf { it.getCycleTime(now) }
+        codeReviews.sumOf { it.countChangesRemoved() }
       }
 
     val perReviewer = repositories
@@ -21,20 +20,20 @@ class CycleTimeCalculator(private val now: Instant) : GenericLongMetricCalculato
         repositories
           .flatMap { repository -> repository.codeReviews }
           .filter { codeReview -> codeReview.requestedReviewers.contains(reviewer) }
-          .sumOf { codeReview -> codeReview.getCycleTime(now) }
+          .sumOf { codeReview -> codeReview.countChangesRemoved() }
       }
 
     val perCodeReview = repositories
       .flatMap { repository -> repository.codeReviews }
-      .associateWith { codeReview -> codeReview.getCycleTime(now) }
+      .associateWith { codeReview -> codeReview.countChangesRemoved() }
 
     val perRepository = repositories
       .associateWith { repository ->
         repository.codeReviews
-          .sumOf { codeReview -> codeReview.getCycleTime(now) }
+          .sumOf { codeReview -> codeReview.countChangesRemoved() }
       }
 
-    return CycleTime(
+    return CodeReviewChangesRemoved(
       perAuthor = perUser,
       perReviewer = perReviewer,
       perCodeReview = perCodeReview,

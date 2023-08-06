@@ -18,9 +18,9 @@ data class Repository(
   override val simpleFormat = """
     |Repository $fullName
     |  · ${codeReviews.size} code reviews
-    |${codeReviews.joinToString("\n") { it.simpleFormat("    · ") }}
+    |${codeReviews.joinToString("\n") { it.simpleFormat("      ") }}
     |  · ${discussions.size} discussions
-    |${discussions.joinToString("\n") { it.simpleFormat("    · ") }}
+    |${discussions.joinToString("\n") { it.simpleFormat("      ") }}
   """.trimMargin()
 
 }
