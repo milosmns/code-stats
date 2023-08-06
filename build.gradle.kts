@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 
 plugins {
   application
-  kotlin("multiplatform") version "1.9.+" // when replacing, search the whole file for "8"
+  kotlin("multiplatform") version "1.9.+" // when replacing, search the whole file for "9"
   kotlin("plugin.serialization") version "1.9.+"
   id("com.apollographql.apollo3") version "4.+"
   id("com.github.johnrengelman.shadow") version "8.+"
@@ -28,12 +28,16 @@ application {
   mainClass.set("MainKt")
 }
 
-group = Out.group
-version = Out.version
+val env = Env()
+val output = Output(env)
+val configurator = Configurator(env, output)
+
+group = output.group
+version = output.version
 
 kotlin {
-  val jvmTarget = Configurator.configureJvmTarget(this)
-  val nativeTarget = Configurator.configureNativeTarget(this)
+  val jvmTarget = configurator.configureJvmTarget(this)
+  val nativeTarget = configurator.configureNativeTarget(this)
 
   sourceSets {
 
@@ -120,7 +124,7 @@ kotlin {
 
     // make the JVM 'jar' task work
     withType<ShadowJar> {
-      archiveBaseName.set(Out.artifact)
+      archiveBaseName.set(output.artifact)
       archiveClassifier.set("")
       archiveVersion.set("")
 
@@ -136,8 +140,8 @@ kotlin {
     register<Copy>("prepareForPublish") {
       group = "distribution"
       description = "Prepare the project outputs for publishing"
-      val distributionsDir = Out.getDistributionsDir()
-      val artifactName = Out.artifact
+      val distributionsDir = output.getDistributionsDir()
+      val artifactName = output.artifact
 
       val dependentTasks = mutableListOf("shadowJar")
       if (nativeTarget != null) {
@@ -147,13 +151,13 @@ kotlin {
 
       // take native if available
       if (nativeTarget != null) {
-        from(Out.getBinaryDir(nativeTarget.name)) {
+        from(output.getBinaryDir(nativeTarget.name)) {
           include("$artifactName.kexe")
           rename { if (it.endsWith(".kexe")) artifactName else it }
         }
       }
       // take JAR anyway
-      from(Out.getJarDir()) {
+      from(output.getJarDir()) {
         include("$artifactName.jar")
       }
 
@@ -167,14 +171,14 @@ kotlin {
     register<Copy>("install") {
       group = "application"
       description = "Build the native executable and install it"
-      val installDir = Out.getInstallDir()
-      val artifactName = Out.artifact
+      val installDir = output.getInstallDir()
+      val artifactName = output.artifact
 
       if (nativeTarget == null) {
         // JVM: copy the file to the root directory
         dependsOn("shadowJar")
 
-        val jarDir = Out.getJarDir()
+        val jarDir = output.getJarDir()
         from(jarDir) {
           include("$artifactName.jar")
         }
@@ -187,7 +191,7 @@ kotlin {
         // Native: copy the file to the programs directory
         dependsOn("${nativeTarget.name}Binaries")
 
-        val binaryDir = Out.getBinaryDir(nativeTarget.name)
+        val binaryDir = output.getBinaryDir(nativeTarget.name)
         from(binaryDir) {
           include("$artifactName.kexe")
           rename { artifactName }
@@ -232,21 +236,21 @@ apollo {
 
 sqldelight {
   databases {
-    create(Out.artifact) {
-      packageName.set(Out.artifact)
+    create(output.artifact) {
+      packageName.set(output.artifact)
     }
   }
 }
 
 githubRelease {
-  val writeToken = OS.env("GITHUB_TOKEN", "<invalid>")
+  val writeToken = env.sysVar("GITHUB_TOKEN") { "<invalid>" }
   if (writeToken == "<invalid>") println("Set \$GITHUB_TOKEN to enable GitHub releases.")
 
-  val commitish = OS.env("GITHUB_SHA", default = "master")
-  val prNumber = OS.env("GITHUB_PR_NUMBER", default = "")
+  val commitish = env.sysVar("GITHUB_SHA") { "master" }
+  val prNumber = env.sysVar("GITHUB_PR_NUMBER")
   val buildMoment = LocalDateTime.now()
   val nowTag = buildMoment.toString("yyyy-MM-dd-HH-mm-ss")
-  val quality = OS.env("BUILD_QUALITY", default = "Development")
+  val quality = env.sysVar("BUILD_QUALITY") { "Development" }
   var directoryPrefix = ""
   var prNumberPrefix = ""
   var timestampSuffix = ""
@@ -264,12 +268,12 @@ githubRelease {
       timestampSuffix = "/$nowTag"
     }
   }
-  val tag = "${directoryPrefix}${prNumberPrefix}v${Out.version}$timestampSuffix"
-  val name = "[$quality] v${Out.version}"
+  val tag = "${directoryPrefix}${prNumberPrefix}v${output.version}$timestampSuffix"
+  val name = "[$quality] v${output.version}"
 
   token(writeToken)
-  owner(Out.repoOwner)
-  repo(Out.repoName)
+  owner(output.repoOwner)
+  repo(output.repoName)
   tagName(tag)
   releaseName(name)
   targetCommitish(commitish)
@@ -314,10 +318,10 @@ githubRelease {
     }
   )
 
-  val distributionsDir = Out.getDistributionsDir()
-  val jarFile = file("$distributionsDir/${Out.artifact}.jar")
+  val distributionsDir = output.getDistributionsDir()
+  val jarFile = file("$distributionsDir/${output.artifact}.jar")
   val configFile = file("src/commonMain/resources/sample.config.yaml")
-  val unixFile = file("$distributionsDir/${Out.artifact}")
+  val unixFile = file("$distributionsDir/${output.artifact}")
   val toInclude = mutableListOf(jarFile, configFile)
   if (unixFile.exists()) toInclude += unixFile
   releaseAssets(*toInclude.toTypedArray())
@@ -327,39 +331,44 @@ githubRelease {
 
 // region Utils
 
-object OS {
+class Env {
   enum class Platform(val targetName: String) { JVM("jvm"), MAC("macNative") }
   enum class Arch { X86, ARM }
 
   val currentPlatform = when {
-    prop("os.name") == "Mac OS X" -> Platform.MAC
+    sysProp("os.name") == "Mac OS X" -> Platform.MAC
     else -> Platform.JVM
   }
 
   val currentArch = when {
-    prop("os.arch") in setOf("arm64", "aarch64") -> Arch.ARM
+    sysProp("os.arch") in setOf("arm64", "aarch64") -> Arch.ARM
     else -> Arch.X86
   }
 
-  fun prop(name: String, default: String = "") = System.getProperty(name)
+  inline fun sysProp(name: String, default: () -> String = { "" }) = System.getProperty(name)
     .takeIf { !it.isNullOrBlank() }
-    ?: default
+    ?: default()
 
-  fun env(name: String, default: String) = System.getenv(name)
+  inline fun gradleProp(name: String, default: () -> String = { "" }) = providers.gradleProperty(name).orNull
     .takeIf { !it.isNullOrBlank() }
-    ?: default
+    ?: default()
+
+  inline fun sysVar(name: String, default: () -> String = { "" }) = System.getenv(name)
+    .takeIf { !it.isNullOrBlank() }
+    ?: default()
+
 }
 
-object Out {
-  val group = OS.env("PROJECT_GROUP", default = "xyz.marinkovic.milos")
-  val artifact = OS.env("PROJECT_ARTIFACT", default = "codestats")
-  val version = OS.env("PROJECT_VERSION", default = "0.3.0")
-  val repoOwner = OS.env("REPO_OWNER", default = "milosmns")
-  val repoName = OS.env("REPO_NAME", default = "code-stats")
+class Output(private val env: Env) {
+  val group = env.sysVar("PROJECT_GROUP") { env.gradleProp("config.group") }
+  val artifact = env.sysVar("PROJECT_ARTIFACT") { env.gradleProp("config.artifact") }
+  val version = env.sysVar("PROJECT_VERSION") { env.gradleProp("config.version") }
+  val repoOwner = env.sysVar("REPO_OWNER") { env.gradleProp("config.gitHubRepoOwner") }
+  val repoName = env.sysVar("REPO_NAME") { env.gradleProp("config.gitHubRepoName") }
 
-  fun getInstallDir() = when (OS.currentPlatform) {
-    OS.Platform.MAC -> "/usr/local/bin"
-    else -> OS.prop("user.dir")
+  fun getInstallDir() = when (env.currentPlatform) {
+    Env.Platform.MAC -> "/usr/local/bin"
+    else -> env.sysProp("user.dir")
   }.replace('/', File.separatorChar)
 
   fun getJarDir() = "build/libs"
@@ -372,10 +381,10 @@ object Out {
     .replace('/', File.separatorChar)
 }
 
-object Configurator {
+class Configurator(private val env: Env, private val output: Output) {
 
   fun configureJvmTarget(container: KotlinTargetContainerWithPresetFunctions) =
-    container.jvm(OS.Platform.JVM.targetName) {
+    container.jvm(Env.Platform.JVM.targetName) {
       compilations.all {
         kotlinOptions.jvmTarget = "17"
         compilerOptions.configure {
@@ -386,16 +395,16 @@ object Configurator {
     }
 
   fun configureNativeTarget(container: KotlinTargetContainerWithPresetFunctions) =
-    when (OS.currentPlatform) {
-      OS.Platform.MAC -> when (OS.currentArch) {
-        OS.Arch.X86 -> container.macosX64(OS.currentPlatform.targetName)
-        OS.Arch.ARM -> container.macosArm64(OS.currentPlatform.targetName)
+    when (env.currentPlatform) {
+      Env.Platform.MAC -> when (env.currentArch) {
+        Env.Arch.X86 -> container.macosX64(env.currentPlatform.targetName)
+        Env.Arch.ARM -> container.macosArm64(env.currentPlatform.targetName)
       }
 
       else -> null
     }?.also { target ->
       target.binaries {
-        executable(Out.artifact) {
+        executable(output.artifact) {
           entryPoint = "main"
         }
         all {
