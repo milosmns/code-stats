@@ -24,7 +24,7 @@ fun CodeReview.countLinesTotal(): Long = changes.sumOf { it.total }.toLong()
 
 fun CodeReview.countLinesAdded(): Long = changes.sumOf { it.additions }.toLong()
 
-fun CodeReview.countLinesRemoved(): Long = changes.sumOf { it.deletions }.toLong()
+fun CodeReview.countLinesDeleted(): Long = changes.sumOf { it.deletions }.toLong()
 // endregion Lines
 
 // region Cycle Time

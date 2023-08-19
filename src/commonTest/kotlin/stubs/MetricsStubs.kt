@@ -1,5 +1,6 @@
 package stubs
 
+import components.data.CodeReviewChange
 import components.data.CodeReviewChange.Status.ADDED
 import components.data.CodeReviewChange.Status.MODIFIED
 import components.data.CodeReviewChange.Status.REMOVED
@@ -248,6 +249,72 @@ object MetricsStubs {
   )
   // endregion Code Review Comment Repos
 
+  // region Code Review Line Repos
+  val codeReviewLineRepo1 = Repository(
+    owner = "Repo1 owner",
+    name = "Repo1 name",
+    discussions = emptyList(),
+    codeReviews = listOf(
+      Stubs.generic.codeReview.copy(
+        id = 1,
+        author = user1,
+        requestedReviewers = listOf(user2),
+        changes = (2.additions + 2.mods + 2.removals) // irrelevant distribution for line stats
+          .withLinesAdded(30)
+          .withLinesDeleted(10),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 2,
+        author = user1,
+        requestedReviewers = emptyList(),
+        changes = (0.additions + 0.mods + 1.removals) // irrelevant distribution for line stats
+          .withLinesAdded(0)
+          .withLinesDeleted(1),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 3,
+        author = user2,
+        requestedReviewers = listOf(user1, user3),
+        changes = (1.additions + 0.mods + 0.removals) // irrelevant distribution for line stats
+          .withLinesAdded(1)
+          .withLinesDeleted(0),
+      ),
+    ),
+  )
+
+  val codeReviewLineRepo2 = Repository(
+    owner = "Repo2 owner",
+    name = "Repo2 name",
+    discussions = emptyList(),
+    codeReviews = listOf(
+      Stubs.generic.codeReview.copy(
+        id = 4,
+        author = user2,
+        requestedReviewers = listOf(user1, user3),
+        changes = (1.additions + 2.mods + 3.removals) // irrelevant distribution for line stats
+          .withLinesAdded(5)
+          .withLinesDeleted(5),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 5,
+        author = user2,
+        requestedReviewers = listOf(user3),
+        changes = (3.additions + 2.mods + 1.removals) // irrelevant distribution for line stats
+          .withLinesAdded(0)
+          .withLinesDeleted(10),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 6,
+        author = user1,
+        requestedReviewers = listOf(user3),
+        changes = (10.additions + 50.mods + 100.removals) // irrelevant distribution for line stats
+          .withLinesAdded(5)
+          .withLinesDeleted(5),
+      ),
+    ),
+  )
+  // endregion Code Review Line Repos
+
   // region Utils
   private val Int.additions
     get() = List(this) {
@@ -275,6 +342,28 @@ object MetricsStubs {
 
   private fun Int.commentsBy(author: User) = List(this) {
     Stubs.generic.codeReviewComment.copy(author = author)
+  }
+
+  // distributes the lines across files; the remainder from the division is added the first files
+  // example: 11 lines across 3 files -> 4, 4, 3
+  // example: 10 lines across 2 files -> 5, 5
+  private fun List<CodeReviewChange>.withLinesAdded(lines: Int) = mapIndexed { index, change ->
+    val distributionRemainder = if (index < lines % size) 1 else 0
+    val updatedAdditions = lines / size + distributionRemainder
+    change.copy(
+      additions = updatedAdditions,
+      total = change.total - change.additions + updatedAdditions,
+    )
+  }
+
+  // same as above, but for deletions
+  private fun List<CodeReviewChange>.withLinesDeleted(lines: Int) = mapIndexed { index, change ->
+    val distributionRemainder = if (index < lines % size) 1 else 0
+    val updatedDeletions = lines / size + distributionRemainder
+    change.copy(
+      deletions = updatedDeletions,
+      total = change.total - change.deletions + updatedDeletions,
+    )
   }
   // endregion Utils
 
