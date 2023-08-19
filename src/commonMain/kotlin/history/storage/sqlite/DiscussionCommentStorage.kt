@@ -2,7 +2,7 @@ package history.storage.sqlite
 
 import codestats.DiscussionComment as DatabaseDiscussionComment
 import codestats.codestats
-import components.data.Discussion
+import components.data.DiscussionComment
 import components.data.TeamHistoryConfig
 import history.storage.mapping.toGeneric
 import history.storage.mapping.toStorage
@@ -12,22 +12,22 @@ interface DiscussionCommentStorage {
   val teamHistoryConfig: TeamHistoryConfig
   val database: codestats
 
-  fun fetchAllDiscussionComments(): List<Discussion.Comment> =
+  fun fetchAllDiscussionComments(): List<DiscussionComment> =
     database.discussionCommentQueries.fetchAll().executeAsList().map(DatabaseDiscussionComment::toGeneric)
 
-  fun fetchOneDiscussionComment(repoName: String, parentId: String, id: String): Discussion.Comment? =
+  fun fetchOneDiscussionComment(repoName: String, parentId: String, id: String): DiscussionComment? =
     database.discussionCommentQueries
       .fetchOne(teamHistoryConfig.owner, repoName, parentId, id)
       .executeAsOneOrNull()
       ?.toGeneric()
 
-  fun fetchAllDiscussionCommentsByParent(repoName: String, parentId: String): List<Discussion.Comment> =
+  fun fetchAllDiscussionCommentsByParent(repoName: String, parentId: String): List<DiscussionComment> =
     database.discussionCommentQueries
       .fetchAllByParent(teamHistoryConfig.owner, repoName, parentId)
       .executeAsList()
       .map(DatabaseDiscussionComment::toGeneric)
 
-  fun storeDiscussionComment(repoName: String, parentId: String, discussionComment: Discussion.Comment) =
+  fun storeDiscussionComment(repoName: String, parentId: String, discussionComment: DiscussionComment) =
     database.discussionCommentQueries.save(discussionComment.toStorage(teamHistoryConfig.owner, repoName, parentId))
 
   fun purgeDiscussionComments() = database.discussionCommentQueries.purge()

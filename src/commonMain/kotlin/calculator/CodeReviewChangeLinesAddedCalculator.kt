@@ -1,40 +1,40 @@
 package calculator
 
 import components.data.Repository
-import components.metrics.CycleTime
-import kotlinx.datetime.Instant
+import components.metrics.CodeReviewChangeLinesAdded
 
-class CycleTimeCalculator(private val now: Instant) : GenericLongMetricCalculator<CycleTime> {
+class CodeReviewChangeLinesAddedCalculator : GenericLongMetricCalculator<CodeReviewChangeLinesAdded> {
 
-  override fun calculate(repositories: List<Repository>): CycleTime {
+  override fun calculate(repositories: List<Repository>): CodeReviewChangeLinesAdded {
     val perUser = repositories
       .flatMap { repository -> repository.codeReviews }
       .groupBy { codeReview -> codeReview.author }
       .mapValues { (_, codeReviews) ->
-        codeReviews.sumOf { it.getCycleTime(now) }
+        codeReviews.sumOf { it.countLinesAdded() }
       }
 
     val perReviewer = repositories
       .flatMap { repository -> repository.codeReviews }
       .flatMap { codeReview -> codeReview.requestedReviewers }
+      .toSet()
       .associateWith { reviewer ->
         repositories
           .flatMap { repository -> repository.codeReviews }
           .filter { codeReview -> codeReview.requestedReviewers.contains(reviewer) }
-          .sumOf { codeReview -> codeReview.getCycleTime(now) }
+          .sumOf { codeReview -> codeReview.countLinesAdded() }
       }
 
     val perCodeReview = repositories
       .flatMap { repository -> repository.codeReviews }
-      .associateWith { codeReview -> codeReview.getCycleTime(now) }
+      .associateWith { codeReview -> codeReview.countLinesAdded() }
 
     val perRepository = repositories
       .associateWith { repository ->
         repository.codeReviews
-          .sumOf { codeReview -> codeReview.getCycleTime(now) }
+          .sumOf { codeReview -> codeReview.countLinesAdded() }
       }
 
-    return CycleTime(
+    return CodeReviewChangeLinesAdded(
       perAuthor = perUser,
       perReviewer = perReviewer,
       perCodeReview = perCodeReview,

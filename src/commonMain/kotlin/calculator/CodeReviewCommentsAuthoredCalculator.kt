@@ -1,40 +1,41 @@
 package calculator
 
 import components.data.Repository
-import components.metrics.CycleTime
-import kotlinx.datetime.Instant
+import components.metrics.CodeReviewCommentsAuthored
 
-class CycleTimeCalculator(private val now: Instant) : GenericLongMetricCalculator<CycleTime> {
+class CodeReviewCommentsAuthoredCalculator : GenericLongMetricCalculator<CodeReviewCommentsAuthored> {
 
-  override fun calculate(repositories: List<Repository>): CycleTime {
+  override fun calculate(repositories: List<Repository>): CodeReviewCommentsAuthored {
     val perUser = repositories
       .flatMap { repository -> repository.codeReviews }
-      .groupBy { codeReview -> codeReview.author }
-      .mapValues { (_, codeReviews) ->
-        codeReviews.sumOf { it.getCycleTime(now) }
-      }
+      .flatMap { codeReview -> codeReview.comments }
+      .groupBy { comment -> comment.author }
+      .mapValues { (_, comments) -> comments.size.toLong() }
 
     val perReviewer = repositories
       .flatMap { repository -> repository.codeReviews }
       .flatMap { codeReview -> codeReview.requestedReviewers }
+      .toSet()
       .associateWith { reviewer ->
         repositories
           .flatMap { repository -> repository.codeReviews }
           .filter { codeReview -> codeReview.requestedReviewers.contains(reviewer) }
-          .sumOf { codeReview -> codeReview.getCycleTime(now) }
+          .flatMap { codeReview -> codeReview.comments }
+          .count { comment -> comment.author == reviewer }
+          .toLong()
       }
 
     val perCodeReview = repositories
       .flatMap { repository -> repository.codeReviews }
-      .associateWith { codeReview -> codeReview.getCycleTime(now) }
+      .associateWith { codeReview -> codeReview.comments.count().toLong() }
 
     val perRepository = repositories
       .associateWith { repository ->
         repository.codeReviews
-          .sumOf { codeReview -> codeReview.getCycleTime(now) }
+          .sumOf { codeReview -> codeReview.comments.count().toLong() }
       }
 
-    return CycleTime(
+    return CodeReviewCommentsAuthored(
       perAuthor = perUser,
       perReviewer = perReviewer,
       perCodeReview = perCodeReview,
