@@ -1,19 +1,17 @@
 package calculator
 
-import components.data.CodeReview
 import components.data.Repository
 import components.metrics.CycleTime
 import kotlinx.datetime.Instant
-import utils.epochMillisecondsUtc
 
-class CycleTimeCalculator(private val now: Instant) {
+class CycleTimeCalculator(private val now: Instant) : GenericLongMetricCalculator<CycleTime> {
 
-  fun calculate(repositories: List<Repository>): CycleTime {
+  override fun calculate(repositories: List<Repository>): CycleTime {
     val perUser = repositories
       .flatMap { repository -> repository.codeReviews }
       .groupBy { codeReview -> codeReview.author }
       .mapValues { (_, codeReviews) ->
-        codeReviews.sumOf { it.getCycleTime() }
+        codeReviews.sumOf { it.getCycleTime(now) }
       }
 
     val perReviewer = repositories
@@ -23,31 +21,25 @@ class CycleTimeCalculator(private val now: Instant) {
         repositories
           .flatMap { repository -> repository.codeReviews }
           .filter { codeReview -> codeReview.requestedReviewers.contains(reviewer) }
-          .sumOf { codeReview -> codeReview.getCycleTime() }
+          .sumOf { codeReview -> codeReview.getCycleTime(now) }
       }
 
     val perCodeReview = repositories
       .flatMap { repository -> repository.codeReviews }
-      .associateWith { codeReview -> codeReview.getCycleTime() }
+      .associateWith { codeReview -> codeReview.getCycleTime(now) }
 
     val perRepository = repositories
       .associateWith { repository ->
         repository.codeReviews
-          .sumOf { codeReview -> codeReview.getCycleTime() }
+          .sumOf { codeReview -> codeReview.getCycleTime(now) }
       }
 
     return CycleTime(
       perAuthor = perUser,
-      perCodeReview = perCodeReview,
       perReviewer = perReviewer,
+      perCodeReview = perCodeReview,
       perRepository = perRepository,
     )
-  }
-
-  private fun CodeReview.getCycleTime(): Long = when {
-    mergedAt != null -> mergedAt.epochMillisecondsUtc - createdAt.epochMillisecondsUtc
-    closedAt != null -> closedAt.epochMillisecondsUtc - createdAt.epochMillisecondsUtc
-    else -> now.toEpochMilliseconds() - createdAt.epochMillisecondsUtc
   }
 
 }
