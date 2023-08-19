@@ -2,6 +2,8 @@ package calculator
 
 import components.data.CodeReview
 import components.data.CodeReviewChange.Status
+import components.data.CodeReviewFeedback
+import components.data.CodeReviewFeedback.State
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import utils.epochMillisecondsUtc
@@ -26,6 +28,19 @@ fun CodeReview.countLinesAdded(): Long = changes.sumOf { it.additions }.toLong()
 
 fun CodeReview.countLinesDeleted(): Long = changes.sumOf { it.deletions }.toLong()
 // endregion Lines
+
+// region Feedbacks
+fun List<CodeReviewFeedback>.countFeedbacksTotal(): Long = size.toLong()
+
+private val approvedStates = setOf(State.APPROVED)
+fun List<CodeReviewFeedback>.countApprovals(): Long = count { it.state in approvedStates }.toLong()
+
+private val rejectedStates = setOf(State.CHANGES_REQUESTED)
+fun List<CodeReviewFeedback>.countRejections(): Long = count { it.state in rejectedStates }.toLong()
+
+private val postponedStates = setOf(State.PENDING, State.COMMENTED, State.DISMISSED)
+fun List<CodeReviewFeedback>.countPostponements(): Long = count { it.state in postponedStates }.toLong()
+// endregion Feedbacks
 
 // region Cycle Time
 fun CodeReview.getCycleTime(now: Instant = Clock.System.now()): Long = when {

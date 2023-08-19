@@ -4,6 +4,9 @@ import components.data.CodeReviewChange
 import components.data.CodeReviewChange.Status.ADDED
 import components.data.CodeReviewChange.Status.MODIFIED
 import components.data.CodeReviewChange.Status.REMOVED
+import components.data.CodeReviewFeedback.State
+import components.data.CodeReviewFeedback.State.APPROVED
+import components.data.CodeReviewFeedback.State.CHANGES_REQUESTED
 import components.data.Repository
 import components.data.User
 import components.metrics.GenericLongMetric
@@ -315,6 +318,60 @@ object MetricsStubs {
   )
   // endregion Code Review Line Repos
 
+  // region Code Review Feedback Repos
+  val codeReviewFeedbackRepo1 = Repository(
+    owner = "Repo1 owner",
+    name = "Repo1 name",
+    discussions = emptyList(),
+    codeReviews = listOf(
+      Stubs.generic.codeReview.copy(
+        id = 1,
+        author = user1,
+        requestedReviewers = listOf(user3),
+        feedbacks = 10.approvals(from = user3) + 2.rejections(from = user3) + 2.postponements(from = user3),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 2,
+        author = user1,
+        requestedReviewers = listOf(user3),
+        feedbacks = 3.approvals(from = user3) + 0.rejections(from = user3) + 0.postponements(from = user3),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 3,
+        author = user2,
+        requestedReviewers = listOf(user1, user3),
+        feedbacks = 0.approvals(from = user1) + 0.rejections(from = user1) + 0.postponements(from = user3),
+      ),
+    ),
+  )
+
+  val codeReviewFeedbackRepo2 = Repository(
+    owner = "Repo2 owner",
+    name = "Repo2 name",
+    discussions = emptyList(),
+    codeReviews = listOf(
+      Stubs.generic.codeReview.copy(
+        id = 4,
+        author = user2,
+        requestedReviewers = listOf(user3),
+        feedbacks = 0.approvals(from = user3) + 1.rejections(from = user3) + 0.postponements(from = user3),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 5,
+        author = user2,
+        requestedReviewers = listOf(user3),
+        feedbacks = 10.approvals(from = user3) + 0.rejections(from = user3) + 0.postponements(from = user3),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 6,
+        author = user2,
+        requestedReviewers = listOf(user3),
+        feedbacks = 11.approvals(from = user3) + 0.rejections(from = user3) + 3.postponements(from = user3),
+      ),
+    ),
+  )
+  // endregion Code Review Feedback Repos
+
   // region Utils
   private val Int.additions
     get() = List(this) {
@@ -363,6 +420,29 @@ object MetricsStubs {
     change.copy(
       deletions = updatedDeletions,
       total = change.total - change.deletions + updatedDeletions,
+    )
+  }
+
+  private fun Int.approvals(from: User = Stubs.generic.user) = List(this) {
+    Stubs.generic.codeReviewFeedback.copy(
+      author = from,
+      state = APPROVED,
+    )
+  }
+
+  private fun Int.rejections(from: User = Stubs.generic.user) = List(this) {
+    Stubs.generic.codeReviewFeedback.copy(
+      author = from,
+      state = CHANGES_REQUESTED,
+    )
+  }
+
+  private fun Int.postponements(from: User = Stubs.generic.user) = List(this) {
+    Stubs.generic.codeReviewFeedback.copy(
+      author = from,
+      state = State.entries
+        .filterNot { it in setOf(APPROVED, CHANGES_REQUESTED) }
+        .random(),
     )
   }
   // endregion Utils
