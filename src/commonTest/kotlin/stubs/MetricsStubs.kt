@@ -372,6 +372,54 @@ object MetricsStubs {
   )
   // endregion Code Review Feedback Repos
 
+  // region Code Reviews Totals Repos
+  val codeReviewsTotalsRepo1 = Repository(
+    owner = "Repo1 owner",
+    name = "Repo1 name",
+    discussions = emptyList(),
+    codeReviews = listOf(
+      Stubs.generic.codeReview.copy(
+        id = 1,
+        author = user1,
+        requestedReviewers = emptyList(),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 2,
+        author = user2,
+        requestedReviewers = listOf(user1),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 3,
+        author = user2,
+        requestedReviewers = listOf(user1, user3),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 4,
+        author = user4,
+        requestedReviewers = listOf(user1),
+      ),
+    ),
+  )
+
+  val codeReviewsTotalsRepo2 = Repository(
+    owner = "Repo2 owner",
+    name = "Repo2 name",
+    discussions = emptyList(),
+    codeReviews = listOf(
+      Stubs.generic.codeReview.copy(
+        id = 5,
+        author = user4,
+        requestedReviewers = listOf(user2),
+      ),
+      Stubs.generic.codeReview.copy(
+        id = 6,
+        author = user3,
+        requestedReviewers = listOf(user2),
+      ),
+    ),
+  )
+  // endregion Code Reviews Totals Repos
+
   // region Utils
   private val Int.additions
     get() = List(this) {
