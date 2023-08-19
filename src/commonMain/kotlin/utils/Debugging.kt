@@ -6,6 +6,7 @@ import components.data.CodeReviewFeedback
 import components.data.Discussion
 import components.data.DiscussionComment
 import components.data.Repository
+import kotlin.math.roundToInt
 
 val Long.durationString: String
   get() = buildString {
@@ -26,6 +27,9 @@ val Long.durationString: String
     if (hours > 0) append("${hours % 24}h ")
     if (mins > 0) append("${mins % 60}m ")
   }.trim()
+
+val Float.twoDecimals: String
+  get() = ((this * 100.0).roundToInt() / 100.0).toString()
 
 class Printable(private val content: String) {
   fun onlyIf(condition: Boolean) = if (condition) print(content) else Unit

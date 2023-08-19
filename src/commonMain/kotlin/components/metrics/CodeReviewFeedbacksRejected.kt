@@ -11,8 +11,8 @@ data class CodeReviewFeedbacksRejected(
   override val perCodeReview: Map<CodeReview, Long>,
   override val perRepository: Map<Repository, Long>,
   override val perDiscussion: Map<Discussion, Long> = emptyMap(),
-) : GenericLongMetric {
+) : GenericCountMetric {
 
-  override val metricName = CodeReviewFeedbacksRejected::class.simpleName!!
+  override val name = CodeReviewFeedbacksRejected::class.simpleName!!
 
 }

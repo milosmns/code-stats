@@ -1,4 +1,4 @@
-import calculator.di.provideCycleTimeCalculator
+import calculator.di.provideGenericLongMetricCalculators
 import components.data.TeamHistoryConfig
 import history.TeamHistory
 import history.github.di.provideGitHubHistory
@@ -65,11 +65,12 @@ fun main(): Unit = runBlocking {
     }
 
     // OTHER EXPERIMENTS
-    val cycleTimeCalculator = provideCycleTimeCalculator()
-    val cycleTime = cycleTimeCalculator.calculate(stored)
-    println("\n== Cycle Time ==")
-    println(cycleTime.simpleFormat)
-    println("-- CYCLE TIME --\n")
+    provideGenericLongMetricCalculators().forEach {
+      val metric = it.calculate(stored)
+      println("\n== ${metric.name} ==")
+      println(metric.simpleFormat)
+      println("-- ${metric.name} --\n")
+    }
   } catch (e: Throwable) {
     println("CRITICAL FAILURE! \n\n * ${e.message} * \n\n")
     e.printStackTrace()

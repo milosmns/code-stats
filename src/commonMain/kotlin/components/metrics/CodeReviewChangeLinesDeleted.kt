@@ -11,8 +11,8 @@ data class CodeReviewChangeLinesDeleted(
   override val perCodeReview: Map<CodeReview, Long>,
   override val perRepository: Map<Repository, Long>,
   override val perDiscussion: Map<Discussion, Long> = emptyMap(),
-) : GenericLongMetric {
+) : GenericCountMetric {
 
-  override val metricName = CodeReviewChangeLinesDeleted::class.simpleName!!
+  override val name = CodeReviewChangeLinesDeleted::class.simpleName!!
 
 }

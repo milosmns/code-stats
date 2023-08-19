@@ -9,7 +9,7 @@ import components.data.CodeReviewFeedback.State.APPROVED
 import components.data.CodeReviewFeedback.State.CHANGES_REQUESTED
 import components.data.Repository
 import components.data.User
-import components.metrics.GenericLongMetric
+import components.metrics.GenericCountMetric
 import kotlinx.datetime.LocalDateTime
 
 object MetricsStubs {
@@ -20,8 +20,8 @@ object MetricsStubs {
   val user4 = User("Four")
 
   // region Metrics
-  val genericLong = object : GenericLongMetric {
-    override val metricName = "Generic Long"
+  val genericLong = object : GenericCountMetric {
+    override val name = "Generic Long"
     override val perAuthor = mapOf(
       user1 to 1L,
       user2 to 2L,

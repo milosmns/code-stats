@@ -5,11 +5,11 @@ import components.data.Discussion
 import components.data.Repository
 import components.data.User
 import utils.HasSimpleFormat
-import utils.durationString
+import utils.twoDecimals
 
-interface GenericLongMetric : HasSimpleFormat {
+interface GenericCountMetric : HasSimpleFormat {
 
-  val metricName: String
+  val name: String
 
   val perAuthor: Map<User, Long>
   val perReviewer: Map<User, Long>
@@ -45,41 +45,41 @@ interface GenericLongMetric : HasSimpleFormat {
 
   override val simpleFormat
     get() = buildString {
-      appendLine(metricName)
+      appendLine(name)
       if (perAuthor.isNotEmpty()) {
         appendLine("  · ${perAuthor.size} authors")
-        appendLine("    · Total: ${totalForAllAuthors.durationString}")
-        appendLine("    · Average: ${averagePerAuthor.toLong().durationString}")
+        appendLine("    · Total: $totalForAllAuthors")
+        appendLine("    · Average: ${averagePerAuthor.twoDecimals}")
         appendLine("    · Outliers:")
-        appendLine(perAuthor.formatOutliers())
+        appendLine(perAuthor.formatOutliersAsCount())
       }
       if (perReviewer.isNotEmpty()) {
         appendLine("  · ${perReviewer.size} reviewers")
-        appendLine("    · Total: ${totalForAllReviewers.durationString}")
-        appendLine("    · Average: ${averagePerReviewer.toLong().durationString}")
+        appendLine("    · Total: $totalForAllReviewers")
+        appendLine("    · Average: ${averagePerReviewer.twoDecimals}")
         appendLine("    · Outliers:")
-        appendLine(perReviewer.formatOutliers())
+        appendLine(perReviewer.formatOutliersAsCount())
       }
       if (perCodeReview.isNotEmpty()) {
         appendLine("  · ${perCodeReview.size} code reviews")
-        appendLine("    · Total: ${totalForAllCodeReviews.durationString}")
-        appendLine("    · Average: ${averagePerCodeReview.toLong().durationString}")
+        appendLine("    · Total: $totalForAllCodeReviews")
+        appendLine("    · Average: ${averagePerCodeReview.twoDecimals}")
         appendLine("    · Outliers:")
-        appendLine(perCodeReview.formatOutliers())
+        appendLine(perCodeReview.formatOutliersAsCount())
       }
       if (perDiscussion.isNotEmpty()) {
         appendLine("  · ${perDiscussion.size} discussions")
-        appendLine("    · Total: ${totalForAllDiscussions.durationString}")
-        appendLine("    · Average: ${averagePerDiscussion.toLong().durationString}")
+        appendLine("    · Total: $totalForAllDiscussions")
+        appendLine("    · Average: ${averagePerDiscussion.twoDecimals}")
         appendLine("    · Outliers:")
-        appendLine(perDiscussion.formatOutliers())
+        appendLine(perDiscussion.formatOutliersAsCount())
       }
       if (perRepository.isNotEmpty()) {
         appendLine("  · ${perRepository.size} repositories")
-        appendLine("    · Total: ${totalForAllRepositories.durationString}")
-        appendLine("    · Average: ${averagePerRepository.toLong().durationString}")
+        appendLine("    · Total: $totalForAllRepositories")
+        appendLine("    · Average: ${averagePerRepository.twoDecimals}")
         appendLine("    · Outliers:")
-        appendLine(perRepository.formatOutliers())
+        appendLine(perRepository.formatOutliersAsCount())
       }
     }
 

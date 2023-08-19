@@ -1,9 +1,9 @@
 package calculator
 
 import components.data.Repository
-import components.metrics.GenericLongMetric
+import components.metrics.GenericCountMetric
 
-interface GenericLongMetricCalculator<out T : GenericLongMetric> {
+interface GenericLongMetricCalculator<out T : GenericCountMetric> {
 
   fun calculate(repositories: List<Repository>): T
 
