@@ -1,4 +1,4 @@
-import calculator.di.provideCycleTimeCalculator
+import calculator.di.provideGenericLongMetricCalculators
 import components.data.TeamHistoryConfig
 import history.TeamHistory
 import history.github.di.provideGitHubHistory
@@ -24,24 +24,23 @@ fun main(): Unit = runBlocking {
   try {
     // NETWORK EXPERIMENTS
 //    println("Loading team history...")
-//    val fetchedUnsorted = mutableListOf<Repository>()
+//    val fetched = mutableListOf<Repository>()
 //    teamHistoryConfig.teams.forEach { team ->
 //      println("Loading for team ${team.title}...")
 //      team.discussionRepositories.forEach { repoName ->
 //        println("Loading discussion repository $repoName...")
-//        fetchedUnsorted += history.fetchRepository(repoName, includeCodeReviews = false, includeDiscussions = true)
+//        fetched += history.fetchRepository(repoName, includeCodeReviews = false, includeDiscussions = true)
 //      }
 //      team.codeRepositories.forEach { repoName ->
 //        println("Loading code repository $repoName...")
-//        fetchedUnsorted += history.fetchRepository(repoName, includeCodeReviews = true, includeDiscussions = false)
+//        fetched += history.fetchRepository(repoName, includeCodeReviews = true, includeDiscussions = false)
 //      }
 //    }
 
     // STORAGE EXPERIMENTS
-//    val storage = provideStoredHistory(teamHistoryConfig)
+    val storage = provideStoredHistory(teamHistoryConfig)
 //    storage.purgeAll()
 //    val storedUnsorted = mutableListOf<Repository>()
-//    val fetched = fetchedUnsorted.sorted()
 //    fetched.forEach {
 //      storage.storeRepositoryDeep(it)
 //      storedUnsorted += storage.fetchRepository(
@@ -50,9 +49,7 @@ fun main(): Unit = runBlocking {
 //        includeDiscussions = true,
 //      )
 //    }
-//    val stored = storedUnsorted.sorted()
 
-    val storage = provideStoredHistory(teamHistoryConfig)
     val stored = storage.fetchAllRepositories().map {
       storage.fetchRepository(
         it.name,
@@ -68,11 +65,12 @@ fun main(): Unit = runBlocking {
     }
 
     // OTHER EXPERIMENTS
-    val cycleTimeCalculator = provideCycleTimeCalculator()
-    val cycleTime = cycleTimeCalculator.calculate(stored)
-    println("\n== Cycle Time ==")
-    println(cycleTime.simpleFormat)
-    println("-- CYCLE TIME --\n")
+    provideGenericLongMetricCalculators().forEach {
+      val metric = it.calculate(stored)
+      println("\n== ${metric.name} ==")
+      println(metric.simpleFormat)
+      println("-- ${metric.name} --\n")
+    }
   } catch (e: Throwable) {
     println("CRITICAL FAILURE! \n\n * ${e.message} * \n\n")
     e.printStackTrace()

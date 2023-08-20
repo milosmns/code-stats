@@ -1,8 +1,12 @@
 package utils
 
 import components.data.CodeReview
+import components.data.CodeReviewComment
+import components.data.CodeReviewFeedback
 import components.data.Discussion
+import components.data.DiscussionComment
 import components.data.Repository
+import kotlin.math.roundToInt
 
 val Long.durationString: String
   get() = buildString {
@@ -23,6 +27,9 @@ val Long.durationString: String
     if (hours > 0) append("${hours % 24}h ")
     if (mins > 0) append("${mins % 60}m ")
   }.trim()
+
+val Float.twoDecimals: String
+  get() = ((this * 100.0).roundToInt() / 100.0).toString()
 
 class Printable(private val content: String) {
   fun onlyIf(condition: Boolean) = if (condition) print(content) else Unit
@@ -50,27 +57,27 @@ fun String.truncateMiddle(): String {
   return cleaned.substring(0, 4).trim() + "..." + cleaned.substring(cleaned.length - 5).trim()
 }
 
-fun CodeReview.Comment.truncate() = copy(
+fun CodeReviewComment.truncate() = copy(
   body = body.truncateMiddle(),
 )
 
-fun CodeReview.Feedback.truncate() = copy(
+fun CodeReviewFeedback.truncate() = copy(
   body = body.truncateMiddle(),
 )
 
 fun CodeReview.truncate() = copy(
   body = body.truncateMiddle(),
-  comments = comments.map(CodeReview.Comment::truncate),
-  feedbacks = feedbacks.map(CodeReview.Feedback::truncate),
+  comments = comments.map(CodeReviewComment::truncate),
+  feedbacks = feedbacks.map(CodeReviewFeedback::truncate),
 )
 
-fun Discussion.Comment.truncate() = copy(
+fun DiscussionComment.truncate() = copy(
   body = body.truncateMiddle(),
 )
 
 fun Discussion.truncate() = copy(
   body = body.truncateMiddle(),
-  comments = comments.map(Discussion.Comment::truncate),
+  comments = comments.map(DiscussionComment::truncate),
 )
 
 fun Repository.truncate() = copy(
