@@ -26,8 +26,8 @@ class DiscussionsCalculator : GenericLongMetricCalculator<Discussions> {
         repositories
           .flatMap { repository -> repository.discussions }
           .count { discussion ->
-            discussion.comments.any { comment -> comment.author == reviewer }
-              && discussion.author != reviewer
+            discussion.comments.any { comment -> comment.author == reviewer } &&
+              discussion.author != reviewer
           }
           .toLong()
       }
