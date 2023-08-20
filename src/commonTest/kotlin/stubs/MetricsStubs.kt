@@ -208,19 +208,19 @@ object MetricsStubs {
         id = 1,
         author = user1,
         requestedReviewers = listOf(user2),
-        comments = 4.commentsBy(user1),
+        comments = 4.codeComments(from = user1),
       ),
       Stubs.generic.codeReview.copy(
         id = 2,
         author = user1,
         requestedReviewers = listOf(user2, user3),
-        comments = 2.commentsBy(user1) + 1.commentsBy(user2),
+        comments = 2.codeComments(from = user1) + 1.codeComments(from = user2),
       ),
       Stubs.generic.codeReview.copy(
         id = 3,
         author = user2,
         requestedReviewers = listOf(user1),
-        comments = 2.commentsBy(user2) + 1.commentsBy(user3),
+        comments = 2.codeComments(from = user2) + 1.codeComments(from = user3),
       ),
     ),
   )
@@ -234,19 +234,19 @@ object MetricsStubs {
         id = 4,
         author = user1,
         requestedReviewers = listOf(user2),
-        comments = 1.commentsBy(user1) + 1.commentsBy(user2),
+        comments = 1.codeComments(from = user1) + 1.codeComments(from = user2),
       ),
       Stubs.generic.codeReview.copy(
         id = 5,
         author = user3,
         requestedReviewers = listOf(user1),
-        comments = 4.commentsBy(user3),
+        comments = 4.codeComments(from = user3),
       ),
       Stubs.generic.codeReview.copy(
         id = 6,
         author = user2,
         requestedReviewers = listOf(user3),
-        comments = 3.commentsBy(user2),
+        comments = 3.codeComments(from = user2),
       ),
     ),
   )
@@ -420,6 +420,54 @@ object MetricsStubs {
   )
   // endregion Code Reviews Totals Repos
 
+  // region Discussion Comments Repos
+  val discussionCommentsRepo1 = Repository(
+    owner = "Repo1 owner",
+    name = "Repo1 name",
+    codeReviews = emptyList(),
+    discussions = listOf(
+      Stubs.generic.discussion.copy(
+        id = "1",
+        number = 1,
+        author = user1,
+        comments = 4.discussionComments(from = user3) + 2.discussionComments(from = user1),
+      ),
+      Stubs.generic.discussion.copy(
+        id = "2",
+        number = 2,
+        author = user3,
+        comments = emptyList(),
+      ),
+    ),
+  )
+
+  val discussionCommentsRepo2 = Repository(
+    owner = "Repo2 owner",
+    name = "Repo2 name",
+    codeReviews = emptyList(),
+    discussions = listOf(
+      Stubs.generic.discussion.copy(
+        id = "3",
+        number = 3,
+        author = user2,
+        comments = 2.discussionComments(from = user3) + 4.discussionComments(from = user1),
+      ),
+      Stubs.generic.discussion.copy(
+        id = "4",
+        number = 4,
+        author = user3,
+        comments = 3.discussionComments(from = user3) + 1.discussionComments(from = user2),
+      ),
+      Stubs.generic.discussion.copy(
+        id = "5",
+        number = 5,
+        author = user2,
+        comments = 2.discussionComments(from = user3) + 1.discussionComments(from = user2),
+      ),
+    ),
+  )
+  // endregion Discussion Comments Repos
+
   // region Utils
   private val Int.additions
     get() = List(this) {
@@ -445,8 +493,8 @@ object MetricsStubs {
       )
     }
 
-  private fun Int.commentsBy(author: User) = List(this) {
-    Stubs.generic.codeReviewComment.copy(author = author)
+  private fun Int.codeComments(from: User) = List(this) {
+    Stubs.generic.codeReviewComment.copy(author = from)
   }
 
   // distributes the lines across files; the remainder from the division is added the first files
@@ -492,6 +540,10 @@ object MetricsStubs {
         .filterNot { it in setOf(APPROVED, CHANGES_REQUESTED) }
         .random(),
     )
+  }
+
+  private fun Int.discussionComments(from: User) = List(this) {
+    Stubs.generic.discussionComment.copy(author = from)
   }
   // endregion Utils
 
