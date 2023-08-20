@@ -2,7 +2,7 @@ package history.storage.sqlite
 
 import codestats.CodeReviewFeedback as DatabaseCodeReviewFeedback
 import codestats.codestats
-import components.data.CodeReview
+import components.data.CodeReviewFeedback
 import components.data.TeamHistoryConfig
 import history.storage.mapping.toGeneric
 import history.storage.mapping.toStorage
@@ -12,22 +12,22 @@ interface CodeReviewFeedbackStorage {
   val teamHistoryConfig: TeamHistoryConfig
   val database: codestats
 
-  fun fetchAllCodeReviewFeedbacks(): List<CodeReview.Feedback> =
+  fun fetchAllCodeReviewFeedbacks(): List<CodeReviewFeedback> =
     database.codeReviewFeedbackQueries.fetchAll().executeAsList().map(DatabaseCodeReviewFeedback::toGeneric)
 
-  fun fetchOneCodeReviewFeedback(repoName: String, parentId: Long, id: Long): CodeReview.Feedback? =
+  fun fetchOneCodeReviewFeedback(repoName: String, parentId: Long, id: Long): CodeReviewFeedback? =
     database.codeReviewFeedbackQueries
       .fetchOne(teamHistoryConfig.owner, repoName, parentId, id)
       .executeAsOneOrNull()
       ?.toGeneric()
 
-  fun fetchAllCodeReviewFeedbacksByParent(repoName: String, parentId: Long): List<CodeReview.Feedback> =
+  fun fetchAllCodeReviewFeedbacksByParent(repoName: String, parentId: Long): List<CodeReviewFeedback> =
     database.codeReviewFeedbackQueries
       .fetchAllByParent(teamHistoryConfig.owner, repoName, parentId)
       .executeAsList()
       .map(DatabaseCodeReviewFeedback::toGeneric)
 
-  fun storeCodeReviewFeedback(repoName: String, parentId: Long, codeReviewFeedback: CodeReview.Feedback) =
+  fun storeCodeReviewFeedback(repoName: String, parentId: Long, codeReviewFeedback: CodeReviewFeedback) =
     database.codeReviewFeedbackQueries.save(codeReviewFeedback.toStorage(teamHistoryConfig.owner, repoName, parentId))
 
   fun purgeCodeReviewFeedbacks() = database.codeReviewFeedbackQueries.purge()
