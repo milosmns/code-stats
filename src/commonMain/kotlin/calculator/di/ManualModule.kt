@@ -15,6 +15,9 @@ import calculator.CodeReviewFeedbacksRejectedCalculator
 import calculator.CodeReviewFeedbacksTotalCalculator
 import calculator.CodeReviewsCalculator
 import calculator.CycleTimeCalculator
+import calculator.DiscussionCommentsAuthoredCalculator
+import calculator.DiscussionCommentsReceivedCalculator
+import calculator.DiscussionsCalculator
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -46,6 +49,12 @@ fun provideCodeReviewFeedbacksTotalCalculator() = CodeReviewFeedbacksTotalCalcul
 
 fun provideCodeReviewsCalculator() = CodeReviewsCalculator()
 
+fun provideDiscussionCommentsAuthoredCalculator() = DiscussionCommentsAuthoredCalculator()
+
+fun provideDiscussionCommentsReceivedCalculator() = DiscussionCommentsReceivedCalculator()
+
+fun provideDiscussionsCalculator() = DiscussionsCalculator()
+
 fun provideCycleTimeCalculator(now: Instant = Clock.System.now()) = CycleTimeCalculator(now)
 
 fun provideGenericLongMetricCalculators() = listOf(
@@ -64,4 +73,7 @@ fun provideGenericLongMetricCalculators() = listOf(
   provideCodeReviewFeedbacksTotalCalculator(),
   provideCodeReviewsCalculator(),
   provideCycleTimeCalculator(),
+  provideDiscussionCommentsAuthoredCalculator(),
+  provideDiscussionCommentsReceivedCalculator(),
+  provideDiscussionsCalculator(),
 )
