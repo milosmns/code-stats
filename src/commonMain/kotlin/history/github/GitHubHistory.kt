@@ -65,7 +65,7 @@ class GitHubHistory(
   }
 
   private fun PrintableLn.using(gitHubHistoryConfig: GitHubHistoryConfig) =
-    onlyIf(gitHubHistoryConfig.isVerbose)
+    doIf(gitHubHistoryConfig.isVerbose)
 
   private fun pullRequestFetcherFor(repository: String) =
     providePullRequestFetcherFor(repository, teamHistoryConfig, gitHubHistoryConfig, httpClient)

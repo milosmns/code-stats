@@ -1,11 +1,5 @@
 package utils
 
-import components.data.CodeReview
-import components.data.CodeReviewComment
-import components.data.CodeReviewFeedback
-import components.data.Discussion
-import components.data.DiscussionComment
-import components.data.Repository
 import kotlin.math.roundToInt
 
 val Long.durationString: String
@@ -32,11 +26,11 @@ val Float.twoDecimals: String
   get() = ((this * 100.0).roundToInt() / 100.0).toString()
 
 class Printable(private val content: String) {
-  fun onlyIf(condition: Boolean) = if (condition) print(content) else Unit
+  fun doIf(condition: Boolean) = if (condition) print(content) else Unit
 }
 
 class PrintableLn(private val content: String) {
-  fun onlyIf(condition: Boolean) = if (condition) println(content) else Unit
+  fun doIf(condition: Boolean) = if (condition) println(content) else Unit
 }
 
 fun printable(text: String = "", indent: Int = 3) =
@@ -50,37 +44,3 @@ fun String.ellipsis(at: Int = 20): String {
   if (cleaned.length <= at) return cleaned
   return cleaned.substring(0, at - 3).trim() + "..."
 }
-
-fun String.truncateMiddle(): String {
-  val cleaned = this.replace("\\s+".toRegex(), " ").trim()
-  if (cleaned.length <= 10) return cleaned
-  return cleaned.substring(0, 4).trim() + "..." + cleaned.substring(cleaned.length - 5).trim()
-}
-
-fun CodeReviewComment.truncate() = copy(
-  body = body.truncateMiddle(),
-)
-
-fun CodeReviewFeedback.truncate() = copy(
-  body = body.truncateMiddle(),
-)
-
-fun CodeReview.truncate() = copy(
-  body = body.truncateMiddle(),
-  comments = comments.map(CodeReviewComment::truncate),
-  feedbacks = feedbacks.map(CodeReviewFeedback::truncate),
-)
-
-fun DiscussionComment.truncate() = copy(
-  body = body.truncateMiddle(),
-)
-
-fun Discussion.truncate() = copy(
-  body = body.truncateMiddle(),
-  comments = comments.map(DiscussionComment::truncate),
-)
-
-fun Repository.truncate() = copy(
-  codeReviews = codeReviews.map(components.data.CodeReview::truncate),
-  discussions = discussions.map(Discussion::truncate),
-)

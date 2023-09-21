@@ -227,9 +227,9 @@ class GitHubPullRequestFetcher(
   }
 
   private fun Printable.using(gitHubHistoryConfig: GitHubHistoryConfig) =
-    onlyIf(gitHubHistoryConfig.shouldPrintProgress)
+    doIf(gitHubHistoryConfig.shouldPrintProgress)
 
   private fun PrintableLn.using(gitHubHistoryConfig: GitHubHistoryConfig) =
-    onlyIf(gitHubHistoryConfig.shouldPrintProgress)
+    doIf(gitHubHistoryConfig.shouldPrintProgress)
 
 }
