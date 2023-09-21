@@ -61,7 +61,6 @@ kotlin {
     }
 
     val commonTest by getting {
-      dependsOn(commonMain)
       dependencies {
         implementation(kotlin("test"))
         implementation("com.squareup.okio:okio-fakefilesystem:3.4.+")
@@ -69,6 +68,8 @@ kotlin {
       }
     }
 
+    // used by the 'getting' delegate
+    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress")
     val jvmMain by getting {
       dependsOn(commonMain)
       dependencies {
@@ -79,12 +80,14 @@ kotlin {
       }
     }
 
-    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress") // used by the 'getting' delegate
+    // used by the 'getting' delegate
+    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress")
     val jvmTest by getting {
       dependsOn(commonTest)
-      dependsOn(jvmMain)
     }
 
+    // used by the 'getting' delegate
+    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress")
     val macNativeMain by getting {
       dependsOn(commonMain)
       dependencies {
@@ -93,10 +96,10 @@ kotlin {
       }
     }
 
-    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress") // used by the 'getting' delegate
+    // used by the 'getting' delegate
+    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress")
     val macNativeTest by getting {
       dependsOn(commonTest)
-      dependsOn(macNativeMain)
     }
 
   }
@@ -120,6 +123,7 @@ kotlin {
           jvmMainCompilation.output.allOutputs,
         )
       )
+      standardInput = System.`in`
     }
 
     // make the JVM 'jar' task work

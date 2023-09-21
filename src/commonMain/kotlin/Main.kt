@@ -1,13 +1,19 @@
 import calculator.di.provideGenericLongMetricCalculators
 import components.data.TeamHistoryConfig
 import history.TeamHistory
+import history.filter.transform.RepositoryDateTransform
 import history.github.di.provideGitHubHistory
 import history.github.di.provideGitHubHistoryConfig
 import history.storage.di.provideStoredHistory
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.LocalDate
 import utils.fromFile
 
 fun main(): Unit = runBlocking {
+  /*************************************************************************
+   THESE ARE TEMPORARY EXPERIMENTS, NOT PART OF THE FINAL PRODUCT
+   *************************************************************************/
+
   println("\n== Code Stats CLI ==\n")
 
   print("Loading configuration... ")
@@ -58,16 +64,31 @@ fun main(): Unit = runBlocking {
       )
     }
 
-    stored.forEachIndexed { i, repo ->
-      println("\n== Repository #$i ==")
+    stored.forEach { repo ->
       println(repo.simpleFormat)
+      repo.codeReviews.forEach {
+        println("\t r#${it.number} ${it.createdAt} >> ${it.mergedAt} >> ${it.closedAt}")
+      }
+      repo.discussions.forEach {
+        println("\t d#${it.number} ${it.createdAt} >> ${it.closedAt}")
+      }
       println("-- ${repo.fullName} --\n")
     }
 
+    println("Filter by date? DD.MM.YYYY (empty for no filter)")
+    val dateString = readln().trim()
+    val filtered = if (dateString.isNotEmpty()) {
+      val day = dateString.substringBefore(".").toInt()
+      val month = dateString.substringAfter(".").substringBefore(".").toInt()
+      val year = dateString.substringAfterLast(".").toInt()
+      val date = LocalDate(year, month, day)
+      val transform = RepositoryDateTransform(date, date)
+      stored.map(transform)
+    } else stored
+
     // OTHER EXPERIMENTS
     provideGenericLongMetricCalculators().forEach {
-      val metric = it.calculate(stored)
-      println("\n== ${metric.name} ==")
+      val metric = it.calculate(filtered)
       println(metric.simpleFormat)
       println("-- ${metric.name} --\n")
     }

@@ -31,8 +31,9 @@ data class GitHubHistoryConfig(
     readEnvVar("GITHUB_PROGRESS")?.toBoolean()
       ?: true,
 
+  // https://docs.github.com/en/rest/overview/resources-in-the-rest-api?apiVersion=2022-11-28#rate-limits-for-requests-from-personal-accounts
   val rateLimitDelayMillis: Long =
     readEnvVar("GITHUB_RATE_LIMIT_DELAY_MILLIS")?.toLongOrNull()
       ?.takeIf { it > 0 }
-      ?: 200L,
+      ?: (15_000 / 60 / 60 / 2), // 2 coroutines running, max 15k requests per hour
 )
