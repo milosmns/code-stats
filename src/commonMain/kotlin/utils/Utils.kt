@@ -50,7 +50,7 @@ fun getLastMondayAsLocal(now: Instant = Clock.System.now()): LocalDate {
 
 fun TeamHistoryConfig.Companion.fromFile(path: String): TeamHistoryConfig {
   if (!path.endsWith(".yaml") && !path.endsWith(".yml"))
-    throw IllegalArgumentException("Must be a YAML file ($path).")
+    throw IllegalArgumentException("Must be a YAML file ($path).\n  Found: $path")
 
   try {
     val ioPath = path.toPath(normalize = true)
@@ -58,7 +58,7 @@ fun TeamHistoryConfig.Companion.fromFile(path: String): TeamHistoryConfig {
     val config = Yaml.Default.decodeFromString<TeamHistoryConfig>(fileContent)
     return config.sorted()
   } catch (e: Exception) {
-    throw IllegalArgumentException("Could not load config file ($path)", e)
+    throw IllegalArgumentException("Failed to load team config from $path.\n Error: ${e.message}", e)
   }
 }
 
