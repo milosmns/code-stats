@@ -33,8 +33,8 @@ data class TeamHistoryConfig(
       |Team History of $owner from $startDate to $endDate
       |  · ${teams.size} teams
       |${teams.joinToString("\n") { it.simpleFormat("    · ") }}
-      |  · Total: ${teams.sumOf { it.codeRepositories.size }} code repositories
-      |  · Total: ${teams.sumOf { it.discussionRepositories.size }} discussion repositories
+      |  · Code repositories: ${teams.sumOf { it.codeRepositories.size }}
+      |  · Discussion repositories: ${teams.sumOf { it.discussionRepositories.size }}
     """.trimMargin()
 
 }

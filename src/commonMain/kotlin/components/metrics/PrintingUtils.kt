@@ -21,7 +21,7 @@ fun <T : HasSimpleFormat> Map<T, Long>.formatOutliersAsDuration(
 )
 
 fun <T : HasSimpleFormat> Map<T, Long>.formatOutliersAsCount(
-  cutAt: Int = 40, // characters
+  cutAt: Int = 50, // characters
   places: Int = 3, // top and bottom
   firstLinePrefix: String = "      ·", // 6 spaces + bullet
   linePrefix: String = "  $firstLinePrefix", // with 2 prefix spaces

@@ -1,6 +1,13 @@
 package history.github.config
 
+import kotlin.math.roundToLong
 import utils.readEnvVar
+
+private const val GITHUB_MAX_RPH = 15_000L // 15k requests per hour
+private const val GITHUB_MAX_RPM = GITHUB_MAX_RPH / 60.0 // ~250 requests per minute
+private const val GITHUB_MAX_RPS = GITHUB_MAX_RPM / 60.0 // ~4 requests per second
+private const val PARALLEL_REQUESTS = 2L // 2 coroutines running in parallel
+private val REQUEST_DELAY_DEFAULT = ((GITHUB_MAX_RPS / PARALLEL_REQUESTS) * 1000).roundToLong() // ~2100 ms delay
 
 data class GitHubHistoryConfig(
   val baseRestUrl: String =
@@ -28,12 +35,13 @@ data class GitHubHistoryConfig(
       ?: false,
 
   val shouldPrintProgress: Boolean =
-    readEnvVar("GITHUB_PROGRESS")?.toBoolean()
+    readEnvVar("GITHUB_PRINT_PROGRESS")?.toBoolean()
       ?: true,
 
   // https://docs.github.com/en/rest/overview/resources-in-the-rest-api?apiVersion=2022-11-28#rate-limits-for-requests-from-personal-accounts
+
   val rateLimitDelayMillis: Long =
     readEnvVar("GITHUB_RATE_LIMIT_DELAY_MILLIS")?.toLongOrNull()
       ?.takeIf { it > 0 }
-      ?: (15_000 / 60 / 60 / 2), // 2 coroutines running, max 15k requests per hour
+      ?: REQUEST_DELAY_DEFAULT,
 )
