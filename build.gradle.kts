@@ -43,20 +43,28 @@ kotlin {
 
     val commonMain by getting {
       dependencies {
+        val ktorVersion = "2.3.+"
         implementation(kotlin("stdlib-common"))
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.+")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.+")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.+")
-        implementation("io.ktor:ktor-client-core:2.3.+")
-        implementation("io.ktor:ktor-client-auth:2.3.+")
-        implementation("io.ktor:ktor-client-logging:2.3.+")
-        implementation("io.ktor:ktor-client-serialization:2.3.+")
-        implementation("io.ktor:ktor-client-content-negotiation:2.3.+")
-        implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.+")
         implementation("com.squareup.okio:okio:3.4.+")
         implementation("net.mamoe.yamlkt:yamlkt:0.+")
         implementation("com.apollographql.apollo3:apollo-api:4.+")
         implementation("com.apollographql.apollo3:apollo-runtime:4.+")
+        implementation("com.github.ajalt.clikt:clikt:4.2.+")
+        implementation("io.ktor:ktor-client-core:$ktorVersion")
+        implementation("io.ktor:ktor-client-auth:$ktorVersion")
+        implementation("io.ktor:ktor-client-logging:$ktorVersion")
+        implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+        implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+        implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+        implementation("io.ktor:ktor-server-core:$ktorVersion")
+        implementation("io.ktor:ktor-server-host-common:$ktorVersion")
+        implementation("io.ktor:ktor-server-cio:$ktorVersion")
+        implementation("io.ktor:ktor-server-cors:$ktorVersion")
+        implementation("io.ktor:ktor-server-forwarded-header:$ktorVersion")
+        implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
       }
     }
 
@@ -65,6 +73,7 @@ kotlin {
         implementation(kotlin("test"))
         implementation("com.squareup.okio:okio-fakefilesystem:3.4.+")
         implementation("com.willowtreeapps.assertk:assertk:0.+")
+        implementation("io.ktor:ktor-server-test-host:2.3.+")
       }
     }
 
