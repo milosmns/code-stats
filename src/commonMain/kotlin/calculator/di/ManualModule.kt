@@ -57,7 +57,7 @@ fun provideDiscussionsCalculator() = DiscussionsCalculator()
 
 fun provideCycleTimeCalculator(now: Instant = Clock.System.now()) = CycleTimeCalculator(now)
 
-fun provideGenericLongMetricCalculators() = listOf(
+fun provideGenericCountMetricCalculators() = listOf(
   provideCodeReviewChangeLinesAddedCalculator(),
   provideCodeReviewChangeLinesDeletedCalculator(),
   provideCodeReviewChangeLinesTotalCalculator(),

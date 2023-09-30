@@ -26,10 +26,16 @@ expect fun readEnvVar(name: String): String?
 suspend inline fun <Input, Output> Iterable<Input>.parallelMap(
   crossinline mapper: suspend (Input) -> Output,
 ): List<Output> = coroutineScope {
-  map {
-    async { mapper(it) }
+  map { input ->
+    async { mapper(input) }
   }.awaitAll()
 }
+
+inline fun <Item> List<Item>.mapIf(condition: Boolean, transform: (Item) -> Item) =
+  if (condition) map(transform) else this
+
+inline fun <Item> List<Item>.filterIf(condition: Boolean, predicate: (Item) -> Boolean) =
+  if (condition) filter(predicate) else this
 
 fun <K, V : Comparable<V>> Map<K, V>.getTop(n: Int = 1): List<Pair<K, V>> =
   toList()

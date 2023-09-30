@@ -2,8 +2,10 @@ package calculator
 
 import components.data.Repository
 import components.metrics.DiscussionCommentsAuthored
+import history.filter.transform.RepositoryCreatedAtTransform
+import kotlinx.datetime.LocalDate
 
-class DiscussionCommentsAuthoredCalculator : GenericLongMetricCalculator<DiscussionCommentsAuthored> {
+class DiscussionCommentsAuthoredCalculator : GenericCountMetricCalculator<DiscussionCommentsAuthored> {
 
   override fun calculate(repositories: List<Repository>): DiscussionCommentsAuthored {
     val perUser = repositories
@@ -46,5 +48,11 @@ class DiscussionCommentsAuthoredCalculator : GenericLongMetricCalculator<Discuss
       perRepository = perRepository,
     )
   }
+
+  override fun getTimeSeriesTransform(date: LocalDate) = RepositoryCreatedAtTransform(
+    createdAt = date,
+    applyToCommentsAndFeedbacks = true,
+    applyToCodeReviewsAndDiscussions = false,
+  )
 
 }

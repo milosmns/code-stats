@@ -15,6 +15,8 @@ data class Repository(
   val fullName: String
     get() = "$owner/$name"
 
+  val isDead: Boolean by lazy { codeReviews.all(CodeReview::isDead) && discussions.all(Discussion::isDead) }
+
   override val simpleFormat = """
     |Repository $fullName
     |  · ${codeReviews.size} code reviews

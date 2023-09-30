@@ -29,6 +29,8 @@ data class CodeReview(
   @Serializable
   enum class State { OPEN, CLOSED }
 
+  val isDead: Boolean by lazy { comments.isEmpty() && feedbacks.isEmpty() }
+
   private val lifetime = when {
     mergedAt != null -> mergedAt.epochMillisecondsUtc - createdAt.epochMillisecondsUtc
     closedAt != null -> closedAt.epochMillisecondsUtc - createdAt.epochMillisecondsUtc

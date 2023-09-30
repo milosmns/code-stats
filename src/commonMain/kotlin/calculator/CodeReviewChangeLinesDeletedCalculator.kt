@@ -2,8 +2,10 @@ package calculator
 
 import components.data.Repository
 import components.metrics.CodeReviewChangeLinesDeleted
+import history.filter.transform.RepositoryFinishedAtTransform
+import kotlinx.datetime.LocalDate
 
-class CodeReviewChangeLinesDeletedCalculator : GenericLongMetricCalculator<CodeReviewChangeLinesDeleted> {
+class CodeReviewChangeLinesDeletedCalculator : GenericCountMetricCalculator<CodeReviewChangeLinesDeleted> {
 
   override fun calculate(repositories: List<Repository>): CodeReviewChangeLinesDeleted {
     val perUser = repositories
@@ -41,5 +43,7 @@ class CodeReviewChangeLinesDeletedCalculator : GenericLongMetricCalculator<CodeR
       perRepository = perRepository,
     )
   }
+
+  override fun getTimeSeriesTransform(date: LocalDate) = RepositoryFinishedAtTransform(date)
 
 }

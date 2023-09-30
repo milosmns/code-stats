@@ -20,6 +20,8 @@ data class Discussion(
   val author: User,
 ) : HasSimpleFormat {
 
+  val isDead: Boolean by lazy { comments.isEmpty() }
+
   private val lifetime = when {
     closedAt != null -> closedAt.epochMillisecondsUtc - createdAt.epochMillisecondsUtc
     else -> Clock.System.now().toEpochMilliseconds() - createdAt.epochMillisecondsUtc
