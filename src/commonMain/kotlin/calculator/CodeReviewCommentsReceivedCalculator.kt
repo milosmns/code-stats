@@ -2,8 +2,10 @@ package calculator
 
 import components.data.Repository
 import components.metrics.CodeReviewCommentsReceived
+import history.filter.transform.RepositoryCreatedAtTransform
+import kotlinx.datetime.LocalDate
 
-class CodeReviewCommentsReceivedCalculator : GenericLongMetricCalculator<CodeReviewCommentsReceived> {
+class CodeReviewCommentsReceivedCalculator : GenericCountMetricCalculator<CodeReviewCommentsReceived> {
 
   override fun calculate(repositories: List<Repository>): CodeReviewCommentsReceived {
     @Suppress("DuplicatedCode") // false positive from DiscussionCommentsReceivedCalculator
@@ -25,5 +27,11 @@ class CodeReviewCommentsReceivedCalculator : GenericLongMetricCalculator<CodeRev
       perAuthor = perUser,
     )
   }
+
+  override fun getTimeSeriesTransform(date: LocalDate) = RepositoryCreatedAtTransform(
+    createdAt = date,
+    applyToCommentsAndFeedbacks = true,
+    applyToCodeReviewsAndDiscussions = false,
+  )
 
 }

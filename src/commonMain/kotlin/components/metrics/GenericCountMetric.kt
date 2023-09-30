@@ -43,6 +43,26 @@ interface GenericCountMetric : HasSimpleFormat {
   val averagePerRepository: Float
     get() = totalForAllRepositories.toFloat() / perRepository.size
 
+  val serializable: SerializableGenericCountMetric
+    get() = SerializableGenericCountMetric(
+      name = name,
+      perAuthor = perAuthor.mapKeys { it.key.login },
+      perReviewer = perReviewer.mapKeys { it.key.login },
+      perCodeReview = perCodeReview.mapKeys { "#${it.key.number}" },
+      perDiscussion = perDiscussion.mapKeys { "#${it.key.number}" },
+      perRepository = perRepository.mapKeys { it.key.fullName },
+      totalForAllAuthors = totalForAllAuthors,
+      averagePerAuthor = averagePerAuthor,
+      totalForAllReviewers = totalForAllReviewers,
+      averagePerReviewer = averagePerReviewer,
+      totalForAllCodeReviews = totalForAllCodeReviews,
+      averagePerCodeReview = averagePerCodeReview,
+      totalForAllDiscussions = totalForAllDiscussions,
+      averagePerDiscussion = averagePerDiscussion,
+      totalForAllRepositories = totalForAllRepositories,
+      averagePerRepository = averagePerRepository,
+    )
+
   override val simpleFormat
     get() = buildString {
       appendLine(name)

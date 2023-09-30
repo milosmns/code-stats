@@ -2,8 +2,10 @@ package calculator
 
 import components.data.Repository
 import components.metrics.CodeReviewFeedbacksTotal
+import history.filter.transform.RepositoryCreatedAtTransform
+import kotlinx.datetime.LocalDate
 
-class CodeReviewFeedbacksTotalCalculator : GenericLongMetricCalculator<CodeReviewFeedbacksTotal> {
+class CodeReviewFeedbacksTotalCalculator : GenericCountMetricCalculator<CodeReviewFeedbacksTotal> {
 
   override fun calculate(repositories: List<Repository>): CodeReviewFeedbacksTotal {
     val perUser = repositories
@@ -36,5 +38,11 @@ class CodeReviewFeedbacksTotalCalculator : GenericLongMetricCalculator<CodeRevie
       perRepository = perRepository,
     )
   }
+
+  override fun getTimeSeriesTransform(date: LocalDate) = RepositoryCreatedAtTransform(
+    createdAt = date,
+    applyToCommentsAndFeedbacks = true,
+    applyToCodeReviewsAndDiscussions = false,
+  )
 
 }
