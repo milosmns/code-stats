@@ -2,9 +2,11 @@ package calculator
 
 import components.data.Repository
 import components.metrics.CycleTime
+import history.filter.transform.RepositoryFinishedAtTransform
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
-class CycleTimeCalculator(private val now: Instant) : GenericLongMetricCalculator<CycleTime> {
+class CycleTimeCalculator(private val now: Instant) : GenericCountMetricCalculator<CycleTime> {
 
   override fun calculate(repositories: List<Repository>): CycleTime {
     val perUser = repositories
@@ -41,5 +43,7 @@ class CycleTimeCalculator(private val now: Instant) : GenericLongMetricCalculato
       perRepository = perRepository,
     )
   }
+
+  override fun getTimeSeriesTransform(date: LocalDate) = RepositoryFinishedAtTransform(date)
 
 }

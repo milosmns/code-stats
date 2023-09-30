@@ -7,7 +7,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import stubs.Stubs
 
-class RepositoryDateTransformTest {
+class RepositoryFinishedAtTransformTest {
 
   @Test fun `transform is applied correctly`() {
     // Code Review components
@@ -92,30 +92,15 @@ class RepositoryDateTransformTest {
       discussions = discussions,
     )
 
-    val expectedCodeReviewComments = listOf(validCodeReviewComment)
-    val expectedCodeReviewFeedbacks = listOf(validCodeReviewFeedback)
-    val expectedCodeReviews = listOf(
-      validCodeReview.copy(
-        comments = expectedCodeReviewComments,
-        feedbacks = expectedCodeReviewFeedbacks,
-      ),
-    )
-
-    val expectedDiscussionComments = listOf(validDiscussionComment)
-    val expectedDiscussions = listOf(
-      validDiscussion.copy(
-        comments = expectedDiscussionComments,
-      ),
-    )
-
+    val expectedCodeReviews = listOf(validCodeReview)
+    val expectedDiscussions = listOf(validDiscussion)
     val expectedRepository = Stubs.generic.repository.copy(
       codeReviews = expectedCodeReviews,
       discussions = expectedDiscussions,
     )
 
-    val transform = RepositoryDateTransform(
-      openDateInclusive = LocalDate(2023, 3, 1),
-      closeDateInclusive = LocalDate(2023, 3, 1),
+    val transform = RepositoryFinishedAtTransform(
+      finishedAt = LocalDate(2023, 3, 1),
     )
 
     assertThat(transform(repository)).isEqualTo(expectedRepository)

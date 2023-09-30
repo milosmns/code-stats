@@ -1,7 +1,7 @@
 package commands.cli
 
 import components.data.TeamHistoryConfig
-import history.filter.transform.RepositoryDateTransform
+import history.filter.transform.RepositoryDateBetweenTransform
 import history.storage.StoredHistory
 import kotlinx.coroutines.Runnable
 
@@ -30,7 +30,7 @@ class ReportCommand(
         includeDiscussions = true,
       )
     }
-    val transform = RepositoryDateTransform(teamHistoryConfig.startDate, teamHistoryConfig.endDate)
+    val transform = RepositoryDateBetweenTransform(teamHistoryConfig.startDate, teamHistoryConfig.endDate)
     val filteredRepos = storedReposDeep.map(transform)
       .filter { repo -> repo.codeReviews.isNotEmpty() || repo.discussions.isNotEmpty() }
     if (filteredRepos.isNotEmpty()) {

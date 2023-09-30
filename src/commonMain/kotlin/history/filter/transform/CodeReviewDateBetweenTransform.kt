@@ -5,7 +5,7 @@ import history.filter.predicate.CodeReviewCommentIsBetween
 import history.filter.predicate.CodeReviewFeedbackIsBetween
 import kotlinx.datetime.LocalDate
 
-class CodeReviewDateTransform(
+class CodeReviewDateBetweenTransform(
   private val openDateInclusive: LocalDate,
   private val closeDateInclusive: LocalDate? = null,
 ) : (CodeReview) -> CodeReview {

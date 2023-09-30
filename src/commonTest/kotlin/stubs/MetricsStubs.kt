@@ -20,7 +20,7 @@ object MetricsStubs {
   val user4 = User("Four")
 
   // region Metrics
-  val genericLong = object : GenericCountMetric {
+  val genericCount = object : GenericCountMetric {
     override val name = "Generic Long"
     override val perAuthor = mapOf(
       user1 to 1L,
