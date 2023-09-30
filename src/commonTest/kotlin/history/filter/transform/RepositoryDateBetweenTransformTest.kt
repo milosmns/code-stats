@@ -7,7 +7,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import stubs.Stubs
 
-class RepositoryDateTransformTest {
+class RepositoryDateBetweenTransformTest {
 
   @Test fun `transform is applied correctly`() {
     // Code Review components
@@ -113,7 +113,7 @@ class RepositoryDateTransformTest {
       discussions = expectedDiscussions,
     )
 
-    val transform = RepositoryDateTransform(
+    val transform = RepositoryDateBetweenTransform(
       openDateInclusive = LocalDate(2023, 3, 1),
       closeDateInclusive = LocalDate(2023, 3, 1),
     )

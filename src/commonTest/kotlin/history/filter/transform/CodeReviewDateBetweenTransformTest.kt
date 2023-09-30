@@ -7,7 +7,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import stubs.Stubs
 
-class CodeReviewDateTransformTest {
+class CodeReviewDateBetweenTransformTest {
 
   @Test fun `transform is applied correctly`() {
     val earlyComment = Stubs.generic.codeReviewComment.copy(createdAt = LocalDateTime(2023, 2, 28, 10, 40, 20))
@@ -22,7 +22,7 @@ class CodeReviewDateTransformTest {
 
     val codeReview = Stubs.generic.codeReview.copy(comments = comments, feedbacks = feedbacks)
     val expected = Stubs.generic.codeReview.copy(comments = listOf(validComment), feedbacks = listOf(validFeedback))
-    val transform = CodeReviewDateTransform(
+    val transform = CodeReviewDateBetweenTransform(
       openDateInclusive = LocalDate(2023, 3, 1),
       closeDateInclusive = LocalDate(2023, 3, 1),
     )
