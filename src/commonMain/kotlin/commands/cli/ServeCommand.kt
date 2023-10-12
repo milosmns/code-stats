@@ -75,12 +75,12 @@ class ServeCommand(
     server = embeddedServer(
       factory = CIO,
       port = serverConfig.portApi,
-    ) { customizeConfiguration() }
+    ) { setUp() }
 
     server.start(wait = true)
   }
 
-  private fun Application.customizeConfiguration() {
+  private fun Application.setUp() {
     install(ForwardedHeaders)
     install(CORS) { allowHost("localhost") }
     install(ContentNegotiation) { json() }
