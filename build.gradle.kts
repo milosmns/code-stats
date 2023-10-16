@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 
 plugins {
   application
-  kotlin("multiplatform") version "1.9.+"
-  kotlin("plugin.serialization") version "1.9.+"
+  kotlin("multiplatform") version "1.9.10"
+  kotlin("plugin.serialization") version "1.9.10"
   id("com.apollographql.apollo3") version "4.+"
   id("com.github.johnrengelman.shadow") version "8.+"
   id("org.jlleitschuh.gradle.ktlint") version "11.+"
@@ -140,6 +140,7 @@ kotlin {
       archiveBaseName.set(output.artifact)
       archiveClassifier.set("")
       archiveVersion.set("")
+      isZip64 = true
 
       val jvmMainCompilation = jvmTarget.compilations.getByName<KotlinJvmCompilation>("main")
       from(jvmMainCompilation.output)
