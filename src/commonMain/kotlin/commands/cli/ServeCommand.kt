@@ -17,6 +17,7 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.forwardedheaders.ForwardedHeaders
 import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.Runnable
@@ -31,7 +32,7 @@ class ServeCommand(
 ) : Runnable {
 
   @Serializable
-  private data class MessageResponse(val message: String)
+  data class MessageResponse(val message: String)
 
   private lateinit var server: BaseApplicationEngine
   private lateinit var storedRepos: List<Repository>
@@ -86,7 +87,7 @@ class ServeCommand(
     install(ContentNegotiation) { json() }
 
     routing {
-      get("/") { call.respond(MessageResponse("Yep, it runs…")) }
+      setUpRoot()
       get("/repos") { call.respond(storedRepos) }
       get("/metrics") { call.respond(metricsByName) }
       get("/time-series") { call.respond(metricsByNameTimeSeries) }
@@ -98,3 +99,5 @@ class ServeCommand(
   }
 
 }
+
+expect fun Route.setUpRoot(): Route
