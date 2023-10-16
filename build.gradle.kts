@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 
 plugins {
   application
-  kotlin("multiplatform") version "1.9.+" // when replacing, search the whole file for "9"
-  kotlin("plugin.serialization") version "1.9.+"
+  kotlin("multiplatform") version "1.9.10"
+  kotlin("plugin.serialization") version "1.9.10"
   id("com.apollographql.apollo3") version "4.+"
   id("com.github.johnrengelman.shadow") version "8.+"
   id("org.jlleitschuh.gradle.ktlint") version "11.+"
-  id("com.github.breadmoirai.github-release") version "2.+"
+  id("com.github.breadmoirai.github-release") version "2.4.+"
   id("app.cash.sqldelight") version "2.+"
 }
 
@@ -140,6 +140,7 @@ kotlin {
       archiveBaseName.set(output.artifact)
       archiveClassifier.set("")
       archiveVersion.set("")
+      isZip64 = true
 
       val jvmMainCompilation = jvmTarget.compilations.getByName<KotlinJvmCompilation>("main")
       from(jvmMainCompilation.output)
