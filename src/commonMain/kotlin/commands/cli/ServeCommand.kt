@@ -86,6 +86,7 @@ class ServeCommand(
     }
 
     println("Now booting up the server...")
+    printWarnings()
     server = embeddedServer(
       factory = CIO,
       port = serverConfig.portApi,
@@ -190,6 +191,17 @@ class ServeCommand(
       }
     }
     return JsonObject(map)
+  }
+
+  private fun printWarnings() {
+    println(
+      "\n ⚠\uFE0F Based on https://stackoverflow.com/a/69464875/2102748," +
+        " Chrome's CORS protection for localhost must be disabled."
+    )
+    println(
+      " ⚠\uFE0F At chrome://flags/#block-insecure-private-network-requests," +
+        " disable \"Block insecure private network requests\".\n"
+    )
   }
 
 }
