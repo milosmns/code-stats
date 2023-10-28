@@ -4,6 +4,9 @@ import utils.durationString
 
 interface GenericDurationMetric : GenericCountMetric {
 
+  override val unit: String
+    get() = "time"
+
   override val simpleFormat
     get() = buildString {
       appendLine(name)
