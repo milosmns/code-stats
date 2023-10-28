@@ -301,82 +301,145 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   })();
 
+
+  // CHARTING AND PAGE UPDATES
+
+  function prepareChartData(metricTimeSeries) {
+    // TODO - generalize later as function argument
+    var breakdownSourceSelector = (metricOnDate) => metricOnDate.perAuthor;
+
+    // this finds the dataset for this date, for example a breakdown by author
+    // and then collects all the keys from that dataset (i.e. all authors)
+    var allDatasourceKeys = [];
+    var metricsOnDates = Object.values(metricTimeSeries);
+    metricsOnDates.forEach((metricOnDate) => {
+      var breakdown = breakdownSourceSelector(metricOnDate);
+      Object.keys(breakdown).forEach((key) => { if (!allDatasourceKeys.includes(key)) allDatasourceKeys.push(key); });
+    });
+    var caseIgnoringComparator = (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' });
+    allDatasourceKeys.sort(caseIgnoringComparator);
+
+    var min = Number.MAX_VALUE;
+    var max = Number.MIN_VALUE;
+    var unit = "count"; // just a sensible default
+
+    var datasets = {}; // it's going to be a key->[values] map; for example user->[25, 151, null]
+    allDatasourceKeys.forEach((key) => {
+      metricsOnDates.forEach((metricOnDate) => {
+        if (metricOnDate.unit) unit = metricOnDate.unit;
+
+        var breakdown = breakdownSourceSelector(metricOnDate);
+        var valueOnDate = breakdown[key] || null;
+        var valuesTimeSeries = datasets[key] || [];
+        valuesTimeSeries.push(valueOnDate);
+        datasets[key] = valuesTimeSeries;
+
+        if (valueOnDate !== null && valueOnDate !== undefined && valueOnDate < min) min = valueOnDate;
+        if (valueOnDate !== null && valueOnDate !== undefined && valueOnDate > max) max = valueOnDate;
+      });
+    });
+
+    var dates = Object.keys(metricTimeSeries);
+    min = Math.floor(min * 0.9); // 10% padding for the bottom bound
+    max = Math.ceil(max * 1.1); // 10% padding for the top bound
+    var tickInterval = getIdealTickInterval(min, max);
+
+    return {
+      unit: unit,
+      tickInterval: tickInterval,
+      min: min,
+      max: max,
+      xValues: dates,
+      yValuesMap: datasets,
+    };
+  }
+
+  function getIdealTickInterval(minValue, maxValue) {
+    const maxTicks = 10;
+    const goodTicks = [
+      1, 2, 5,
+      10, 15, 20, 25, 50,
+      100, 150, 200, 250, 500,
+      1000, 1500, 2000, 2500, 5000,
+      10000, 15000, 20000, 25000, 50000,
+      100000, 150000, 200000, 250000, 500000,
+      1000000, 1500000, 2000000, 2500000, 5000000,
+      10000000, 15000000, 20000000, 25000000, 50000000,
+      100000000, 150000000, 200000000, 250000000, 500000000,
+    ];
+    const averageTickInterval = (maxValue - minValue) / maxTicks;
+
+    // find the best easy number for tick interval
+    let tickInterval = 1;
+    for (let i = 0; i < goodTicks.length; i++) {
+      const easyNumber = goodTicks[i];
+      if (averageTickInterval <= easyNumber) {
+        tickInterval = easyNumber;
+        break;
+      }
+    }
+
+    // increase the interval until there are less than maxTicks total
+    while ((maxValue - minValue) / tickInterval > maxTicks) {
+      tickInterval *= 2;
+    }
+
+    return tickInterval;
+  }
+
+  function getColorFromKey(key) {
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+      hash = key.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    // adjust hue to generate predominantly green colors
+    const hue = Math.floor((Math.sin(hash++) + 1) / 2 * 120 + 160);
+    const saturation = Math.floor((Math.sin(hash++) + 1) / 2 * 50 + 30);
+    const lightness = Math.floor((Math.sin(hash++) + 1) / 2 * 30 + 50);
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  }
+
   var charts = {};
   var gridLine;
   var titleColor;
 
   function reloadChart(metricTimeSeries) {
-    var width, height, gradient;
-
-    function getGradient(ctx, chartArea) {
-      var chartWidth = chartArea.right - chartArea.left;
-      var chartHeight = chartArea.bottom - chartArea.top;
-
-      if (gradient === null || width !== chartWidth || height !== chartHeight) {
-        width = chartWidth;
-        height = chartHeight;
-        gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-        gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
-        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.4)');
-      }
-
-      return gradient;
-    }
-
     var context = document.getElementById('chart-main');
     var rootCanvas = context.getContext('2d');
 
-
-    // EXTRACT OUT AND PRODUCE PER-AUTHOR TIME SERIES
-    var dates = Object.keys(metricTimeSeries);
-    var metricsOnDates = Object.values(metricTimeSeries);
-    var unit = metricsOnDates[0].unit ?? "count";
-    var metricValuesOnDates = [];
-    var maxValue = 0;
-    metricsOnDates.forEach(function (metric) {
-      const value = metric.totalForAllAuthors;
-      if (value > maxValue) maxValue = value;
-      metricValuesOnDates.push(value);
-    });
-    dates.push('2021-01-01');
-    metricValuesOnDates.push(null);
-    dates.push('2023-01-01');
-    metricValuesOnDates.push(60);
-
+    var chartData = prepareChartData(metricTimeSeries);
+    var datasets = [];
+    for (const [sourceKey, timeSeries] of Object.entries(chartData.yValuesMap)) {
+      datasets.push({
+        label: sourceKey,
+        data: timeSeries,
+        cubicInterpolationMode: 'monotone',
+        tension: 0.4,
+        backgroundColor: [getColorFromKey(sourceKey)],
+        borderColor: [getColorFromKey(sourceKey)],
+        borderWidth: 2.5,
+        spanGaps: true,
+        hidden: timeSeries.every(item => item === null),
+      });
+    };
 
     var rootChart = new Chart(rootCanvas, {
       type: 'line',
       data: {
-        labels: dates,
-        datasets: [{
-          label: 'Total for all authors',
-          data: metricValuesOnDates,
-          cubicInterpolationMode: 'monotone',
-          tension: 0.4,
-          backgroundColor: ['#1f4efa'],
-          borderColor: ['#1f4efa'],
-          borderWidth: 2
-        }
-          // , {
-          //   label: 'Previous',
-          //   data: [20, 36, 16, 45, 29, 32, 10],
-          //   cubicInterpolationMode: 'monotone',
-          //   tension: 0.4,
-          //   backgroundColor: ['rgba(75, 222, 151, 1)'],
-          //   borderColor: ['rgba(75, 222, 151, 1)'],
-          //   borderWidth: 2
-          // }
-        ]
+        labels: chartData.xValues,
+        datasets: datasets
       },
       options: {
         scales: {
           y: {
-            min: 0,
-            max: maxValue + (maxValue * 1.1),
+            min: chartData.min,
+            max: chartData.max,
             ticks: {
-              stepSize: maxValue / 10,
+              stepSize: chartData.tickInterval,
               callback: function (value) {
-                return formatMetric(value, unit);
+                return formatMetric(value, chartData.unit);
               }
             },
             grid: {
@@ -391,39 +454,40 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         elements: {
           point: {
-            radius: 2
+            radius: 3.5
           }
         },
         plugins: {
           legend: {
-            position: 'top',
-            align: 'end',
+            position: 'bottom',
+            align: 'center',
             labels: {
-              boxWidth: 8,
-              boxHeight: 8,
+              boxWidth: 10,
+              boxHeight: 10,
               usePointStyle: true,
               font: {
-                size: 12,
-                weight: '500'
+                size: 14,
+                weight: '400'
               }
             }
           },
           title: {
             display: true,
             text: ['Time Series'],
-            align: 'start',
-            color: '#171717',
+            align: 'center',
+            color: '#555555',
             font: {
               size: 16,
               family: 'Inter',
-              weight: '600',
-              lineHeight: 1.4
+              weight: '400',
+              lineHeight: 1.2
             }
           },
           tooltip: {
             callbacks: {
               label: function (context) {
-                return formatMetric(context.parsed.y, unit);
+                var pointName = context.dataset.label ? (context.dataset.label + ": ") : '';
+                return pointName + formatMetric(context.parsed.y, chartData.unit);
               }
             }
           }
@@ -448,10 +512,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (darkMode === 'enabled') {
       gridLine = '#37374F';
-      titleColor = '#EFF0F6';
+      titleColor = '#AAAAAA';
     } else {
       gridLine = '#EEEEEE';
-      titleColor = '#171717';
+      titleColor = '#555555';
     }
 
     if (charts.hasOwnProperty('main')) {
@@ -462,8 +526,6 @@ document.addEventListener('DOMContentLoaded', function () {
       charts.main.update();
     }
   }
-
-  /* #####  STRICTLY BUSINESS  ##### */
 
   function transformCamelCase(input) {
     return input.replace(/([a-z])([A-Z])/g, '$1 $2')
