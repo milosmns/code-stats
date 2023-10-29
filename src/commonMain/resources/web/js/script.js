@@ -201,7 +201,11 @@ document.addEventListener('DOMContentLoaded', function () {
           disableDarkMode();
         }
 
-        updateChartTheme();
+        updateChartTheme('chart-per-author');
+        updateChartTheme('chart-per-reviewer');
+        updateChartTheme('chart-per-code-review');
+        updateChartTheme('chart-per-discussion');
+        updateChartTheme('chart-per-repository');
       });
     }
   })();
@@ -304,10 +308,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // CHARTING AND PAGE UPDATES
 
-  function prepareChartData(metricTimeSeries) {
-    // TODO - generalize later as function argument
-    var breakdownSourceSelector = (metricOnDate) => metricOnDate.perAuthor;
-
+  function prepareBreakdownChartData(metricTimeSeries, breakdownSourceSelector, averageSelector) {
     // this finds the dataset for this date, for example a breakdown by author
     // and then collects all the keys from that dataset (i.e. all authors)
     var allDatasourceKeys = [];
@@ -324,6 +325,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var unit = "count"; // just a sensible default
 
     var datasets = {}; // it's going to be a key->[values] map; for example user->[25, 151, null]
+    var averages = []; // averages for each date, for example [25.3, 151.5, 204.1]
     allDatasourceKeys.forEach((key) => {
       metricsOnDates.forEach((metricOnDate) => {
         if (metricOnDate.unit) unit = metricOnDate.unit;
@@ -333,6 +335,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var valuesTimeSeries = datasets[key] || [];
         valuesTimeSeries.push(valueOnDate);
         datasets[key] = valuesTimeSeries;
+        var average = averageSelector(metricOnDate) || null;
+        averages.push(average);
 
         if (valueOnDate !== null && valueOnDate !== undefined && valueOnDate < min) min = valueOnDate;
         if (valueOnDate !== null && valueOnDate !== undefined && valueOnDate > max) max = valueOnDate;
@@ -351,6 +355,7 @@ document.addEventListener('DOMContentLoaded', function () {
       max: max,
       xValues: dates,
       yValuesMap: datasets,
+      averages: averages,
     };
   }
 
@@ -393,8 +398,8 @@ document.addEventListener('DOMContentLoaded', function () {
       hash = key.charCodeAt(i) + ((hash << 5) - hash);
     }
 
-    // adjust hue to generate predominantly green colors
-    const hue = Math.floor((Math.sin(hash++) + 1) / 2 * 120 + 160);
+    // adjust hue to generate predominantly blue and green colors
+    const hue = Math.floor((Math.sin(hash++) + 1) / 2 * 120 + 150);
     const saturation = Math.floor((Math.sin(hash++) + 1) / 2 * 50 + 30);
     const lightness = Math.floor((Math.sin(hash++) + 1) / 2 * 30 + 50);
 
@@ -405,13 +410,19 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridLine;
   var titleColor;
 
-  function reloadChart(metricTimeSeries) {
-    var context = document.getElementById('chart-main');
-    var rootCanvas = context.getContext('2d');
+  function setUpChart(metricTimeSeries, breakdownSourceSelector, averageSelector, chartId, chartTitle, chartParentId) {
+    var chartElement = document.getElementById(chartId);
+    var chartParentElement = document.getElementById(chartParentId);
+    var canvas = chartElement.getContext('2d');
 
-    var chartData = prepareChartData(metricTimeSeries);
+    var chartData = prepareBreakdownChartData(metricTimeSeries, breakdownSourceSelector, averageSelector);
+    var labelToTimeSeriesList = Object.entries(chartData.yValuesMap);
+    var hideLabelsByDefault = labelToTimeSeriesList.length > 7 && labelToTimeSeriesList.length < 30;
+    var hideLegend = labelToTimeSeriesList.length > 30; // usually useless after 30 labels (hover still works)
+    var hasAverages = chartData.averages.some(item => item !== null);
+
     var datasets = [];
-    for (const [sourceKey, timeSeries] of Object.entries(chartData.yValuesMap)) {
+    for (const [sourceKey, timeSeries] of labelToTimeSeriesList) {
       datasets.push({
         label: sourceKey,
         data: timeSeries,
@@ -421,17 +432,33 @@ document.addEventListener('DOMContentLoaded', function () {
         borderColor: [getColorFromKey(sourceKey)],
         borderWidth: 2.5,
         spanGaps: true,
-        hidden: timeSeries.every(item => item === null),
+        hidden: hideLabelsByDefault || timeSeries.every(item => item === null),
       });
     };
+    if (hasAverages) {
+      datasets.push({
+        label: 'Average',
+        data: chartData.averages,
+        cubicInterpolationMode: 'monotone',
+        tension: 0.4,
+        backgroundColor: ['rgba(255, 30, 30, 0.7)'],
+        borderColor: ['rgba(255, 30, 30, 0.7)'],
+        borderWidth: 3,
+        borderDash: [3, 3],
+        spanGaps: true,
+        hidden: false,
+      });
+    }
 
-    var rootChart = new Chart(rootCanvas, {
+    var chartConfig = new Chart(canvas, {
       type: 'line',
       data: {
         labels: chartData.xValues,
         datasets: datasets
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         scales: {
           y: {
             min: chartData.min,
@@ -454,12 +481,12 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         elements: {
           point: {
-            radius: 3.5
+            radius: 4
           }
         },
         plugins: {
           legend: {
-            position: 'bottom',
+            position: 'top',
             align: 'center',
             labels: {
               boxWidth: 10,
@@ -469,11 +496,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 size: 14,
                 weight: '400'
               }
-            }
+            },
+            display: !hideLegend
           },
           title: {
             display: true,
-            text: ['Time Series'],
+            text: [chartTitle],
             align: 'center',
             color: '#555555',
             font: {
@@ -503,11 +531,17 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    charts.main = rootChart;
-    updateChartTheme();
+    charts[chartId] = chartConfig;
+    updateChartTheme(chartId);
+
+    if (!hasAverages) {
+      chartParentElement.style.display = 'none';
+    } else {
+      chartParentElement.style.display = 'block';
+    }
   }
 
-  function updateChartTheme() {
+  function updateChartTheme(chartId) {
     var darkMode = localStorage.getItem('darkMode');
 
     if (darkMode === 'enabled') {
@@ -518,13 +552,11 @@ document.addEventListener('DOMContentLoaded', function () {
       titleColor = '#555555';
     }
 
-    if (charts.hasOwnProperty('main')) {
-      charts.main.options.scales.x.grid.color = gridLine;
-      charts.main.options.plugins.title.color = titleColor;
-      charts.main.options.scales.y.ticks.color = titleColor;
-      charts.main.options.scales.x.ticks.color = titleColor;
-      charts.main.update();
-    }
+    charts[chartId].options.scales.x.grid.color = gridLine;
+    charts[chartId].options.plugins.title.color = titleColor;
+    charts[chartId].options.scales.y.ticks.color = titleColor;
+    charts[chartId].options.scales.x.ticks.color = titleColor;
+    charts[chartId].update();
   }
 
   function transformCamelCase(input) {
@@ -689,83 +721,68 @@ document.addEventListener('DOMContentLoaded', function () {
         holders.error.textContent = '';
 
         // Authors
-        if (data.totalForAllAuthors || data.totalForAllAuthors === 0) {
-          holders.authors.total.wrapper.style.display = 'block';
-          holders.authors.total.value.textContent = formatMetric(data.totalForAllAuthors, data.unit);
-          holders.authors.total.unit.textContent = data.unit;
-        } else {
-          holders.authors.total.wrapper.style.display = 'none';
-        }
+        holders.authors.total.wrapper.style.display = 'block';
+        holders.authors.total.value.textContent = formatMetric(data.totalForAllAuthors, data.unit);
+        holders.authors.total.unit.textContent = data.unit;
         if (data.averagePerAuthor || data.averagePerAuthor === 0) {
           holders.authors.average.wrapper.style.display = 'block';
           holders.authors.average.value.textContent = formatMetric(data.averagePerAuthor, data.unit);
           holders.authors.average.unit.textContent = data.unit;
         } else {
           holders.authors.average.wrapper.style.display = 'none';
+          holders.authors.total.wrapper.style.display = 'none';
         }
 
         // Reviewers
-        if (data.totalForAllReviewers || data.totalForAllReviewers === 0) {
-          holders.reviewers.total.wrapper.style.display = 'block';
-          holders.reviewers.total.value.textContent = formatMetric(data.totalForAllReviewers, data.unit);
-          holders.reviewers.total.unit.textContent = data.unit;
-        } else {
-          holders.reviewers.total.wrapper.style.display = 'none';
-        }
+        holders.reviewers.total.wrapper.style.display = 'block';
+        holders.reviewers.total.value.textContent = formatMetric(data.totalForAllReviewers, data.unit);
+        holders.reviewers.total.unit.textContent = data.unit;
         if (data.averagePerReviewer || data.averagePerReviewer === 0) {
           holders.reviewers.average.wrapper.style.display = 'block';
           holders.reviewers.average.value.textContent = formatMetric(data.averagePerReviewer, data.unit);
           holders.reviewers.average.unit.textContent = data.unit;
         } else {
           holders.reviewers.average.wrapper.style.display = 'none';
+          holders.reviewers.total.wrapper.style.display = 'none';
         }
 
         // Code reviews
-        if (data.totalForAllCodeReviews || data.totalForAllCodeReviews === 0) {
-          holders.codeReviews.total.wrapper.style.display = 'block';
-          holders.codeReviews.total.value.textContent = formatMetric(data.totalForAllCodeReviews, data.unit);
-          holders.codeReviews.total.unit.textContent = data.unit;
-        } else {
-          holders.codeReviews.total.wrapper.style.display = 'none';
-        }
+        holders.codeReviews.total.wrapper.style.display = 'block';
+        holders.codeReviews.total.value.textContent = formatMetric(data.totalForAllCodeReviews, data.unit);
+        holders.codeReviews.total.unit.textContent = data.unit;
         if (data.averagePerCodeReview || data.averagePerCodeReview === 0) {
           holders.codeReviews.average.wrapper.style.display = 'block';
           holders.codeReviews.average.value.textContent = formatMetric(data.averagePerCodeReview, data.unit);
           holders.codeReviews.average.unit.textContent = data.unit;
         } else {
           holders.codeReviews.average.wrapper.style.display = 'none';
+          holders.codeReviews.total.wrapper.style.display = 'none';
         }
 
         // Discussions
-        if (data.totalForAllDiscussions || data.totalForAllDiscussions === 0) {
-          holders.discussions.total.wrapper.style.display = 'block';
-          holders.discussions.total.value.textContent = formatMetric(data.totalForAllDiscussions, data.unit);
-          holders.discussions.total.unit.textContent = data.unit;
-        } else {
-          holders.discussions.total.wrapper.style.display = 'none';
-        }
+        holders.discussions.total.wrapper.style.display = 'block';
+        holders.discussions.total.value.textContent = formatMetric(data.totalForAllDiscussions, data.unit);
+        holders.discussions.total.unit.textContent = data.unit;
         if (data.averagePerDiscussion || data.averagePerDiscussion === 0) {
           holders.discussions.average.wrapper.style.display = 'block';
           holders.discussions.average.value.textContent = formatMetric(data.averagePerDiscussion, data.unit);
           holders.discussions.average.unit.textContent = data.unit;
         } else {
           holders.discussions.average.wrapper.style.display = 'none';
+          holders.discussions.total.wrapper.style.display = 'none';
         }
 
         // Repositories
-        if (data.totalForAllRepositories || data.totalForAllRepositories === 0) {
-          holders.repositories.total.wrapper.style.display = 'block';
-          holders.repositories.total.value.textContent = formatMetric(data.totalForAllRepositories, data.unit);
-          holders.repositories.total.unit.textContent = data.unit;
-        } else {
-          holders.repositories.total.wrapper.style.display = 'none';
-        }
+        holders.repositories.total.wrapper.style.display = 'block';
+        holders.repositories.total.value.textContent = formatMetric(data.totalForAllRepositories, data.unit);
+        holders.repositories.total.unit.textContent = data.unit;
         if (data.averagePerRepository || data.averagePerRepository === 0) {
           holders.repositories.average.wrapper.style.display = 'block';
           holders.repositories.average.value.textContent = formatMetric(data.averagePerRepository, data.unit);
           holders.repositories.average.unit.textContent = data.unit;
         } else {
           holders.repositories.average.wrapper.style.display = 'none';
+          holders.repositories.total.wrapper.style.display = 'none';
         }
       })
       .catch(function (error) {
@@ -781,7 +798,27 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(response => response.json())
       .then(function (data) {
         errorHolder.textContent = '';
-        reloadChart(data);
+
+        var perAuthorSelector = (metricOnDate) => metricOnDate.perAuthor;
+        var authorsAverageSelector = (metricOnDate) => metricOnDate.averagePerAuthor;
+
+        var perReviewerSelector = (metricOnDate) => metricOnDate.perReviewer;
+        var reviewersAverageSelector = (metricOnDate) => metricOnDate.averagePerReviewer;
+
+        var perCodeReviewSelector = (metricOnDate) => metricOnDate.perCodeReview;
+        var codeReviewsAverageSelector = (metricOnDate) => metricOnDate.averagePerCodeReview;
+
+        var perDiscussionSelector = (metricOnDate) => metricOnDate.perDiscussion;
+        var discussionsAverageSelector = (metricOnDate) => metricOnDate.averagePerDiscussion;
+
+        var perRepositorySelector = (metricOnDate) => metricOnDate.perRepository;
+        var repositoriesAverageSelector = (metricOnDate) => metricOnDate.averagePerRepository;
+
+        setUpChart(data, perAuthorSelector, authorsAverageSelector, 'chart-per-author', 'Authors breakdown', 'chart-per-author-wrapper');
+        setUpChart(data, perReviewerSelector, reviewersAverageSelector, 'chart-per-reviewer', 'Reviewers breakdown', 'chart-per-reviewer-wrapper');
+        setUpChart(data, perCodeReviewSelector, codeReviewsAverageSelector, 'chart-per-code-review', 'Code reviews breakdown', 'chart-per-code-review-wrapper');
+        setUpChart(data, perDiscussionSelector, discussionsAverageSelector, 'chart-per-discussion', 'Discussions breakdown', 'chart-per-discussion-wrapper');
+        setUpChart(data, perRepositorySelector, repositoriesAverageSelector, 'chart-per-repository', 'Repositories breakdown', 'chart-per-repository-wrapper');
       })
       .catch(function (error) {
         console.error('Error fetching data: ', error);
