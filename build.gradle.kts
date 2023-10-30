@@ -8,7 +8,6 @@ import org.gradle.internal.impldep.org.joda.time.LocalDateTime
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 
 plugins {
   application
@@ -98,20 +97,20 @@ kotlin {
     }
 
     // used by the 'getting' delegate
-//    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress")
-//    val macNativeMain by getting {
-//      dependsOn(commonMain)
-//      dependencies {
-//        implementation("io.ktor:ktor-client-curl:2.3.+")
-//        implementation("app.cash.sqldelight:native-driver:2.+")
-//      }
-//    }
+    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress")
+    val macNativeMain by getting {
+      dependsOn(commonMain)
+      dependencies {
+        implementation("io.ktor:ktor-client-curl:2.3.+")
+        implementation("app.cash.sqldelight:native-driver:2.+")
+      }
+    }
 
     // used by the 'getting' delegate
-//    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress")
-//    val macNativeTest by getting {
-//      dependsOn(commonTest)
-//    }
+    @Suppress("UNUSED_VARIABLE", "KotlinRedundantDiagnosticSuppress")
+    val macNativeTest by getting {
+      dependsOn(commonTest)
+    }
 
   }
 
@@ -410,15 +409,12 @@ class Configurator(private val env: Env, private val output: Output) {
       println("Configured Kotlin target '$name'")
     }
 
-  @Suppress("USELESS_CAST", "UNUSED_PARAMETER")
-  fun configureNativeTarget(container: KotlinTargetContainerWithPresetFunctions): KotlinNativeTargetWithHostTests? =
+  fun configureNativeTarget(container: KotlinTargetContainerWithPresetFunctions) =
     when (env.currentPlatform) {
-      // TODO – disabled temporarily until the build is fixed
-      Env.Platform.MAC -> null as? KotlinNativeTargetWithHostTests?
-      // when (env.currentArch) {
-      //   Env.Arch.X86 -> container.macosX64(env.currentPlatform.targetName)
-      //   Env.Arch.ARM -> container.macosArm64(env.currentPlatform.targetName)
-      // }
+      Env.Platform.MAC -> when (env.currentArch) {
+        Env.Arch.X86 -> container.macosX64(env.currentPlatform.targetName)
+        Env.Arch.ARM -> container.macosArm64(env.currentPlatform.targetName)
+      }
 
       else -> null
     }?.also { target ->
