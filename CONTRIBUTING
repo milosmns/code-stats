@@ -33,6 +33,7 @@ Please, **do not** open new pull requests at random without creating an issue fi
 It is important that we don't start making changes to the tool without prior consent from the maintainers.
 This goes even for documentation fixes and other cosmetic improvements.
 
+
 # Ground Rules
 
 ### Setting expectations
@@ -77,30 +78,34 @@ and that you need to update your git branch so it's easier to merge.
 #### 🙄 &nbsp; <font color="#A02070">WhY dIs BaD cOdE? HoW tO wOrK?</font>
 
 Well… look, we get it. Software evolves and 💩 happens over time.
-Tech stacks change, popularity of the most popular libraries tanks, best practices evolve.
-Despite maintainers' best intentions and hard work, we often end up having a lot of legacy code and tech debt through no fault of our own.
+Technology stacks change, popular libraries lose their appeal, and best practices transform.
+Despite the best efforts of maintainers, legacy code and technical debt often accumulate, not by choice but by necessity.
 
-In the specific case of Code Stats, the project has evolved through these phases:
+In the case of Code Stats, the project has traversed several phases:
 
-  1. Wrapper around GitHub's original "contributors" page with small edits in an `<iframe>`
-  1. Enterprise export from GitHub to Big Query
-  1. Enterprise export with further SQL export to Google Sheets for better visualization
-  1. JavaScript bot that operates on live data with no storage
-  1. TypeScript, but runnnig inside of Firebase's functions-based nodes
-  1. Python Command Line Interface (CLI) for BigQuery and Firebase
-  1. Python CLI with an offline storage
-  1. Kotlin running Python CLI modules, with an offline storage
-  1. Pure HTML5 and JavaScript, communicating with Firebase Python functions
-  1. **Current open-source versions (Nov 2023)**
+  1. Wrapped GitHub's original "contributors" page in an `<iframe>` with minor edits
+  2. Transitioned to an enterprise export from GitHub to Big Query
+  3. Advanced further with SQL export to Google Sheets for enhanced visualization
+  4. Implemented a JavaScript bot operating on live data with no storage
+  5. Adopted TypeScript, running inside Firebase's functions-based nodes
+  6. Developed a Python _Command Line Interface_ (CLI) for BigQuery and Firebase
+  7. Enhanced the CLI with _some_ offline storage
+  8. Utilized Kotlin, integrating Python CLI modules, still with an offline storage
+  9. Embraced pure HTML5 and JavaScript, communicating with Firebase Python functions
+  10. **Current open-source versions (Nov 2023)**
 
-As you may imagine, different features and different project modules were written in different languages, using different approaches to
-problem-solving and different programming paradigms. 
-As a result, some of today's Kotlin code looks like JS, some JS code looks like Python, and some tooling scripts work and run similarly to Python.
+Different features and modules were created using diverse languages and approaches to problem-solving, as well as programming paradigms.
+Consequently, some Kotlin code resembles JavaScript, some JavaScript code mimics Python, and certain tooling scripts bear similarities to Python's behavior.
 
-It may be ideal to have a single tech stack for all layers of the project.
-However, that's not feasible at the moment due to the amount of refactoring work required.
-There's good news though – the tool now uses **only two** tech stacks to run!
-It's Kotlin for the CLI / data processor / backend, and HTML5 with JavaScript for the frontend.
+A unified tech stack for all project layers would be optimal (maybe). However, extensive refactoring currently prevents this consolidation.
+But hey, here's the good news – the project now relies on **only two** tech stacks: Kotlin for CLI/data processing/backend and HTML5 with JavaScript for the frontend.
+
+Additionally, it's important to note that [Chat GPT](https://openai.com/blog/chatgpt) contributed to parts of this code.
+[GitHub's Copilot](https://github.com/features/copilot) also played a significant role in code generation.
+Due to these specialized tools, coding styles and complexities vary across features.
+
+Ending on a positive note – the project is now open-source and welcomes contributions for refactoring and cleanup!
+
 
 # Getting started
 
@@ -116,6 +121,7 @@ The general how-to:
   1. When you finally like the changes and think the project could use them:
       1. Make sure you have followed the code style for the project
       1. Open a new pull request indicating that you are ready for a review
+
 
 # How to report a bug
 
@@ -140,6 +146,7 @@ When filing a new bug issue, make sure to answer these five questions:
   1. What did you expect to see?
   1. What did you see instead?
 
+
 # How to suggest a feature or enhancement
 
 ### General requests
@@ -149,6 +156,7 @@ We should aim to to provide small, robust tooling for our users.
 If you find yourself wishing for a feature that doesn't exist in Code Stats, you are probably not alone. There are others out there with similar needs. Many of the features that we have today have been added because the users saw the need, whether internally or externaly (post open-sourcing).
 
 To make a new request, simply open a new issue on our issues page on GitHub, and in it describe the feature you would like. Make sure to include what you'd like to see, why you need it, and how it should work in detail.
+
 
 # Code review process
 
