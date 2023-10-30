@@ -411,10 +411,11 @@ class Configurator(private val env: Env, private val output: Output) {
 
   fun configureNativeTarget(container: KotlinTargetContainerWithPresetFunctions) =
     when (env.currentPlatform) {
-      Env.Platform.MAC -> when (env.currentArch) {
-        Env.Arch.X86 -> container.macosX64(env.currentPlatform.targetName)
-        Env.Arch.ARM -> container.macosArm64(env.currentPlatform.targetName)
-      }
+      Env.Platform.MAC -> null // TODO – disabled temporarily until the build is fixed
+      // when (env.currentArch) {
+      //   Env.Arch.X86 -> container.macosX64(env.currentPlatform.targetName)
+      //   Env.Arch.ARM -> container.macosArm64(env.currentPlatform.targetName)
+      // }
 
       else -> null
     }?.also { target ->
