@@ -37,17 +37,14 @@ jobs:
       - name: Lint check
         run: ./gradlew ktlintCheck
 
-      # - name: Build all targets
-      #   run: ./gradlew assemble
-
-      - name: Build JVM targets
-        run: ./gradlew shadowJar
+      - name: Build all targets
+        run: ./gradlew assemble
 
       - name: Run JVM tests
         run: ./gradlew jvmTest
 
-#      - name: Run Mac/Native tests
-#        run: ./gradlew macNativeTest
+      - name: Run Mac/Native tests
+        run: ./gradlew macNativeTest
 
       - name: Prepare for Publishing
         run: ./gradlew prepareForPublish
