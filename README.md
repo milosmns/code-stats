@@ -13,7 +13,7 @@
 
 <br/>
 <br/>
-<div style="text-align: center">
+<div style="text-align: center" align="center">
   <!--suppress CheckImageSize -->
   <img src="./readme/media/code-stats-logo-icon.png" alt="Logo" width="128" height="128">
   <h3>Code Stats</h3>
