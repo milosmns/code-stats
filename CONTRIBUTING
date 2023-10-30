@@ -1,0 +1,174 @@
+# Contributing guide
+
+[//]: # (Inspired by github.com/nayafia/contributing-template)
+
+#### Thank you! 💚
+
+First off, thank you for considering contributing to this project. It's people like you that make Code Stats such a great tool.
+
+Now let's get down to business.
+
+### Why these guidelines?
+
+Following these guidelines helps to communicate that you respect the time of the developers managing and developing this open source project.
+In return, they should reciprocate that respect in addressing your issue, assessing changes, and helping you finalize your pull requests.
+
+Without this guide, we're all just making assumptions – the authors of this tool don't like that.
+
+### What <u>does</u> this tool need?
+
+Code Stats is an open source project for a reason, and we love to receive contributions from our community — you!
+There are many ways to contribute, from writing tutorials or blog posts, improving the documentation, submitting
+bug reports / bug fixes / feature requests, or even writing new code which can be incorporated into Code Stats itself.
+
+The more work you do, the more karma you get.
+
+### What <u>doesn't</u> this tool need?
+
+Please, **do not** open issues, bug reports, feature requests and other work requests if the same already exists.
+Check whether the issues page on GitHub already has your request, and see if the existing issue list can help you.
+Stack Overflow is also worth considering if you're customizing the tool for your needs.
+
+Please, **do not** open new pull requests at random without creating an issue first.
+It is important that we don't start making changes to the tool without prior consent from the maintainers.
+This goes even for documentation fixes and other cosmetic improvements.
+
+
+# Ground Rules
+
+### Setting expectations
+
+#### Maintainer and contributor responsibilities:
+
+  * Ensure cross-platform compatibility for every change that's accepted
+      * This is best done through the continuous integration (CI) pipelines
+  * Ensure that code that goes into the project meets all requirements set by the project configuration
+      * CI pipelines are there to verify, just in case
+  * Create issues for any changes and enhancements that you wish to make
+      * Discuss things transparently and get feedback
+  * Follow the best practices for the given platform, unless the project is configured to do differently
+      * When not sure, follow the project's codebase to understand the maintainer behavior
+  * Keep feature versions as small as possible, preferably one new feature per version
+      * The project uses [semantic versioning](https://semver.org)
+  * Maintainers are generally busy, and they do open-source work on a voluntary basis
+      * Please treat maintainers as volunteers and not your employees
+  * Be welcoming to newcomers and encourage diverse new contributors from all backgrounds
+      * See the [Python Community Code of Conduct](https://www.python.org/psf/codeofconduct/) for reference
+
+### Your First Contribution
+
+Unsure where to begin contributing to Code Stats?
+You can start by looking through the [list of open issues](https://github.com/milosmns/code-stats/issues).
+We will try to categorize the issues using labels and tags, so you'll be able to use labels and tags to filter.
+While not perfect, number of comments on an issue is a reasonable proxy for impact a given change will have.
+
+#### For people and bots who have never contributed to open source projects before:
+
+Working on your first issue? Here are some resources to get you started with Pull Requests (PRs):
+
+  * [EggHead's **How-To**](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github)
+  * [MakeAPullRequest's **How-To**](https://makeapullrequest.com)
+  * [FirstTimersOnly's **How-To**](http://www.firsttimersonly.com)
+
+You're not feeling ready to make your changes? Then feel ready to ask for help. 🤓 Everyone is a beginner at first! 
+
+For example, if a maintainer asks you to "rebase" your PR, they're saying that a lot of code has changed outside of your work,
+and that you need to update your git branch so it's easier to merge.
+
+#### 🙄 &nbsp; <font color="#A02070">WhY dIs BaD cOdE? HoW tO wOrK?</font>
+
+Well… look, we get it. Software evolves and 💩 happens over time.
+Technology stacks change, popular libraries lose their appeal, and best practices transform.
+Despite the best efforts of maintainers, legacy code and technical debt often accumulate, not by choice but by necessity.
+
+In the case of Code Stats, the project has traversed several phases:
+
+  1. Wrapped GitHub's original "contributors" page in an `<iframe>` with minor edits
+  2. Transitioned to an enterprise export from GitHub to Big Query
+  3. Advanced further with SQL export to Google Sheets for enhanced visualization
+  4. Implemented a JavaScript bot operating on live data with no storage
+  5. Adopted TypeScript, running inside Firebase's functions-based nodes
+  6. Developed a Python _Command Line Interface_ (CLI) for BigQuery and Firebase
+  7. Enhanced the CLI with _some_ offline storage
+  8. Utilized Kotlin, integrating Python CLI modules, still with an offline storage
+  9. Embraced pure HTML5 and JavaScript, communicating with Firebase Python functions
+  10. **Current open-source versions (Nov 2023)**
+
+Different features and modules were created using diverse languages and approaches to problem-solving, as well as programming paradigms.
+Consequently, some Kotlin code resembles JavaScript, some JavaScript code mimics Python, and certain tooling scripts bear similarities to Python's behavior.
+
+A unified tech stack for all project layers would be optimal (maybe). However, extensive refactoring currently prevents this consolidation.
+But hey, here's the good news – the project now relies on **only two** tech stacks: Kotlin for CLI/data processing/backend and HTML5 with JavaScript for the frontend.
+
+Additionally, it's important to note that [Chat GPT](https://openai.com/blog/chatgpt) contributed to parts of this code.
+[GitHub's Copilot](https://github.com/features/copilot) also played a significant role in code generation.
+Due to these specialized tools, coding styles and complexities vary across features.
+
+Ending on a positive note – the project is now open-source and welcomes contributions for refactoring and cleanup!
+
+
+# Getting started
+
+### How to submit contributions
+
+The general how-to:
+  
+  1. Check out this contributing guide in full
+  1. Note the custom license that Code Stats has today
+  1. Create your own fork of the repository
+  1. Make the changes in your fork
+      * For obvious reasons, make sure to include tests with every product change
+  1. When you finally like the changes and think the project could use them:
+      1. Make sure you have followed the code style for the project
+      1. Open a new pull request indicating that you are ready for a review
+
+
+# How to report a bug
+
+### Security considerations
+
+If you believe that you have found a security vulnerability, **DO NOT** open an issue disclosing it. Try to reach out to the maintainers directly through their GitHub account pages.
+
+In order to determine whether you are dealing with a security issue, ask yourself these two questions:
+
+  * Can I access something that's not mine, or something I shouldn't have access to?
+  * Can I disable something for other people?
+
+If the answer to either of those two questions are "yes", then you're probably dealing with a security issue. Note that even if you answer "no" to both questions, you may still be dealing with a security issue – so if you're unsure, just reach out to one of the maintainers in private to discuss it.
+
+### General bugs
+
+When filing a new bug issue, make sure to answer these five questions:
+
+  1. What version of Code Stats are you using?
+  1. What operating system and processor architecture are you using?
+  1. What did you do when you saw the issue?
+  1. What did you expect to see?
+  1. What did you see instead?
+
+
+# How to suggest a feature or enhancement
+
+### General requests
+
+We should aim to to provide small, robust tooling for our users.
+
+If you find yourself wishing for a feature that doesn't exist in Code Stats, you are probably not alone. There are others out there with similar needs. Many of the features that we have today have been added because the users saw the need, whether internally or externaly (post open-sourcing).
+
+To make a new request, simply open a new issue on our issues page on GitHub, and in it describe the feature you would like. Make sure to include what you'd like to see, why you need it, and how it should work in detail.
+
+
+# Code review process
+
+### General contributions
+
+The maintainers look at Pull Requests (PRs) on a regular basis. We can't say exactly how often, but normally it's multiple times per month.
+As each PR must include a link to the issue it is addressing, it should be clear to the maintainers what they're looking at.
+
+After PR feedback has been given, we expect responses within two weeks. After two weeks, we may decide to close the PR if it isn't showing any activity.
+
+### Code, commit message, labeling, and other conventions
+
+For now, there are no strict rules. In general, we use imperative language for commit messages (as that's the industry standard).
+
+If there are new style rules, they will be included in this section as they appear.

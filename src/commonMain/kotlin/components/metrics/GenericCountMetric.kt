@@ -10,6 +10,7 @@ import utils.twoDecimals
 interface GenericCountMetric : HasSimpleFormat {
 
   val name: String
+  val unit: String get() = "count"
 
   val perAuthor: Map<User, Long>
   val perReviewer: Map<User, Long>
@@ -46,21 +47,22 @@ interface GenericCountMetric : HasSimpleFormat {
   val serializable: SerializableGenericCountMetric
     get() = SerializableGenericCountMetric(
       name = name,
+      unit = unit,
       perAuthor = perAuthor.mapKeys { it.key.login },
       perReviewer = perReviewer.mapKeys { it.key.login },
       perCodeReview = perCodeReview.mapKeys { "#${it.key.number}" },
       perDiscussion = perDiscussion.mapKeys { "#${it.key.number}" },
       perRepository = perRepository.mapKeys { it.key.fullName },
       totalForAllAuthors = totalForAllAuthors,
-      averagePerAuthor = averagePerAuthor,
+      averagePerAuthor = if (averagePerAuthor.isNaN()) null else averagePerAuthor,
       totalForAllReviewers = totalForAllReviewers,
-      averagePerReviewer = averagePerReviewer,
+      averagePerReviewer = if (averagePerReviewer.isNaN()) null else averagePerReviewer,
       totalForAllCodeReviews = totalForAllCodeReviews,
-      averagePerCodeReview = averagePerCodeReview,
+      averagePerCodeReview = if (averagePerCodeReview.isNaN()) null else averagePerCodeReview,
       totalForAllDiscussions = totalForAllDiscussions,
-      averagePerDiscussion = averagePerDiscussion,
+      averagePerDiscussion = if (averagePerDiscussion.isNaN()) null else averagePerDiscussion,
       totalForAllRepositories = totalForAllRepositories,
-      averagePerRepository = averagePerRepository,
+      averagePerRepository = if (averagePerRepository.isNaN()) null else averagePerRepository,
     )
 
   override val simpleFormat

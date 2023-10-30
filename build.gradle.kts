@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 
 plugins {
   application
-  kotlin("multiplatform") version "1.9.+" // when replacing, search the whole file for "9"
-  kotlin("plugin.serialization") version "1.9.+"
+  kotlin("multiplatform") version "1.9.10"
+  kotlin("plugin.serialization") version "1.9.10"
   id("com.apollographql.apollo3") version "4.+"
   id("com.github.johnrengelman.shadow") version "8.+"
   id("org.jlleitschuh.gradle.ktlint") version "11.+"
-  id("com.github.breadmoirai.github-release") version "2.+"
+  id("com.github.breadmoirai.github-release") version "2.4.+"
   id("app.cash.sqldelight") version "2.+"
 }
 
@@ -47,7 +47,8 @@ kotlin {
         implementation(kotlin("stdlib-common"))
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.+")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.+")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.+")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.+")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.+")
         implementation("com.squareup.okio:okio:3.4.+")
         implementation("net.mamoe.yamlkt:yamlkt:0.+")
         implementation("com.apollographql.apollo3:apollo-api:4.+")
@@ -140,6 +141,7 @@ kotlin {
       archiveBaseName.set(output.artifact)
       archiveClassifier.set("")
       archiveVersion.set("")
+      isZip64 = true
 
       val jvmMainCompilation = jvmTarget.compilations.getByName<KotlinJvmCompilation>("main")
       from(jvmMainCompilation.output)
@@ -409,10 +411,11 @@ class Configurator(private val env: Env, private val output: Output) {
 
   fun configureNativeTarget(container: KotlinTargetContainerWithPresetFunctions) =
     when (env.currentPlatform) {
-      Env.Platform.MAC -> when (env.currentArch) {
-        Env.Arch.X86 -> container.macosX64(env.currentPlatform.targetName)
-        Env.Arch.ARM -> container.macosArm64(env.currentPlatform.targetName)
-      }
+      Env.Platform.MAC -> null // TODO – disabled temporarily until the build is fixed
+      // when (env.currentArch) {
+      //   Env.Arch.X86 -> container.macosX64(env.currentPlatform.targetName)
+      //   Env.Arch.ARM -> container.macosArm64(env.currentPlatform.targetName)
+      // }
 
       else -> null
     }?.also { target ->

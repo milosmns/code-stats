@@ -13,6 +13,6 @@ data class CycleTime(
   override val perDiscussion: Map<Discussion, Long> = emptyMap(),
 ) : GenericDurationMetric {
 
-  override val name = "Cycle Time"
+  override val name = CycleTime::class.simpleName!!
 
 }

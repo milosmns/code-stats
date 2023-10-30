@@ -1,0 +1,20 @@
+Company name: Elegant Goodies
+Company website: elegant-goodies.com
+Template website: dashboard.elegant-goodies.com
+Description:
+
+The Elegant Dashboard Kit is based on real practice, has a sleek design and well-coded template. You will build your dashboard interface 10x faster with this template.
+
+- 22+ responsive pages
+
+- Figma design file included
+
+- HTML5 / CSS / SASS sources
+
+- Ready-made JS plugins (Dropzone, Chart.js, Quil.js ...)
+
+- Bootstrap 5 based
+
+- Light + Dark mode
+
+- Fast support by author

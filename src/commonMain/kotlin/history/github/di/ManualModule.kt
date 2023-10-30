@@ -69,9 +69,6 @@ private fun provideJsonSerializer(): Json =
 
 fun provideHttpClient(gitHubHistoryConfig: GitHubHistoryConfig): HttpClient =
   HttpClient(provideHttpClientEngineFactory()) {
-    engine {
-      threadsCount = 2 // GitHub rate limiter will kill us otherwise
-    }
     install(Logging) {
       logger = Logger.DEFAULT
       level = if (gitHubHistoryConfig.isVerbose) LogLevel.ALL else LogLevel.NONE
