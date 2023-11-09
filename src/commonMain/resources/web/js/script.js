@@ -417,12 +417,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var chartData = prepareBreakdownChartData(metricTimeSeries, breakdownSourceSelector, averageSelector);
     var labelToTimeSeriesList = Object.entries(chartData.yValuesMap);
-    var hideLabelsByDefault = labelToTimeSeriesList.length > 7 && labelToTimeSeriesList.length < 30;
-    var hideLegend = labelToTimeSeriesList.length > 30; // usually useless after 30 labels (hover still works)
+    // usually useless after 50 labels, while hover still works. large datasets are dots so they're ok to display
+    var showLegend = labelToTimeSeriesList.length < 200;
+    var disableLabelsDueToSize = showLegend && (labelToTimeSeriesList.length > 7 && labelToTimeSeriesList.length < 50 || labelToTimeSeriesList.length > 200);
     var hasAverages = chartData.averages.some(item => item !== null);
 
     var datasets = [];
     for (const [sourceKey, timeSeries] of labelToTimeSeriesList) {
+      var disableLabelsDueToLackOfData = timeSeries.every(item => item === null);
       datasets.push({
         label: sourceKey,
         data: timeSeries,
@@ -432,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function () {
         borderColor: [getColorFromKey(sourceKey)],
         borderWidth: 2.5,
         spanGaps: true,
-        hidden: hideLabelsByDefault || timeSeries.every(item => item === null),
+        hidden: disableLabelsDueToSize || disableLabelsDueToLackOfData,
       });
     };
     if (hasAverages) {
@@ -497,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 weight: '400'
               }
             },
-            display: !hideLegend
+            display: showLegend
           },
           title: {
             display: true,
