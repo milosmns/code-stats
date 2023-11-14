@@ -308,6 +308,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // CHARTING AND PAGE UPDATES
 
+  String.prototype.hashCode = function () {
+    let hash = 0;
+    for (let i = 0; i < this.length; i++) {
+      const char = this.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+    }
+    return hash;
+  };
+
   function prepareBreakdownChartData(metricTimeSeries, breakdownSourceSelector, averageSelector) {
     // this finds the dataset for this date, for example a breakdown by author
     // and then collects all the keys from that dataset (i.e. all authors)
@@ -393,15 +402,29 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function getColorFromKey(key) {
-    let hash = 0;
-    for (let i = 0; i < key.length; i++) {
-      hash = key.charCodeAt(i) + ((hash << 5) - hash);
-    }
+    // Use hash to ensure consistent random variations for the same key
+    const randomSeed = Math.abs(key.hashCode());
 
-    // adjust hue to generate predominantly blue and green colors
-    const hue = Math.floor((Math.sin(hash++) + 1) / 2 * 120 + 150);
-    const saturation = Math.floor((Math.sin(hash++) + 1) / 2 * 50 + 30);
-    const lightness = Math.floor((Math.sin(hash++) + 1) / 2 * 30 + 50);
+    // Define acceptable hue ranges (avoiding red)
+    const hueRanges = [
+      [30, 60],   // Orange
+      [240, 300], // Purple
+    ];
+
+    const baseHue = randomSeed % 300; // Using a larger range to account for avoided red
+    const baseSaturation = (randomSeed * 2654435761) % 31 + 70; // Between 70% and 100%
+    const baseLightness = (randomSeed * 2654435761) % 61 + 20; // Between 20% and 80%
+
+    // Calculate hue variation within acceptable ranges
+    const hueVariation = (Math.random() * 61 - 30 + randomSeed) % 300;
+
+    // Find the acceptable hue range
+    const acceptableRange = hueRanges.find(range => baseHue + hueVariation >= range[0] && baseHue + hueVariation <= range[1]);
+
+    // Calculate final hue within the chosen range
+    const hue = (baseHue + hueVariation + (acceptableRange ? acceptableRange[1] : 0) - 30) % 360;
+    const saturation = Math.min(Math.max(baseSaturation, 0), 100);
+    const lightness = baseLightness;
 
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }
@@ -410,33 +433,27 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridLine;
   var titleColor;
 
-  function setUpChart(metricTimeSeries, breakdownSourceSelector, averageSelector, chartId, chartTitle, chartParentId) {
+  function setUpChart(
+    metricTimeSeries,
+    breakdownSourceSelector,
+    averageSelector,
+    chartId,
+    chartTitle,
+    chartParentId,
+    showLegend,
+    forceLabels = false,
+  ) {
     var chartElement = document.getElementById(chartId);
     var chartParentElement = document.getElementById(chartParentId);
     var canvas = chartElement.getContext('2d');
 
     var chartData = prepareBreakdownChartData(metricTimeSeries, breakdownSourceSelector, averageSelector);
     var labelToTimeSeriesList = Object.entries(chartData.yValuesMap);
-    // usually useless after 50 labels, while hover still works. large datasets are dots so they're ok to display
-    var showLegend = labelToTimeSeriesList.length < 200;
-    var disableLabelsDueToSize = showLegend && (labelToTimeSeriesList.length > 7 && labelToTimeSeriesList.length < 50 || labelToTimeSeriesList.length > 200);
+    // usually useless when there are a lot of labels; hide by default when too many
+    var disableLabelsDueToSize = labelToTimeSeriesList.length > 15;
     var hasAverages = chartData.averages.some(item => item !== null);
-
     var datasets = [];
-    for (const [sourceKey, timeSeries] of labelToTimeSeriesList) {
-      var disableLabelsDueToLackOfData = timeSeries.every(item => item === null);
-      datasets.push({
-        label: sourceKey,
-        data: timeSeries,
-        cubicInterpolationMode: 'monotone',
-        tension: 0.4,
-        backgroundColor: [getColorFromKey(sourceKey)],
-        borderColor: [getColorFromKey(sourceKey)],
-        borderWidth: 2.5,
-        spanGaps: true,
-        hidden: disableLabelsDueToSize || disableLabelsDueToLackOfData,
-      });
-    };
+
     if (hasAverages) {
       datasets.push({
         label: 'Average',
@@ -451,6 +468,21 @@ document.addEventListener('DOMContentLoaded', function () {
         hidden: false,
       });
     }
+
+    for (const [sourceKey, timeSeries] of labelToTimeSeriesList) {
+      var disableLabelsDueToLackOfData = timeSeries.every(item => item === null);
+      datasets.push({
+        label: sourceKey,
+        data: timeSeries,
+        cubicInterpolationMode: 'monotone',
+        tension: 0.4,
+        backgroundColor: [getColorFromKey(sourceKey)],
+        borderColor: [getColorFromKey(sourceKey)],
+        borderWidth: 2.5,
+        spanGaps: true,
+        hidden: !forceLabels && (disableLabelsDueToSize || disableLabelsDueToLackOfData),
+      });
+    };
 
     var chartConfig = new Chart(canvas, {
       type: 'line',
@@ -816,11 +848,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var perRepositorySelector = (metricOnDate) => metricOnDate.perRepository;
         var repositoriesAverageSelector = (metricOnDate) => metricOnDate.averagePerRepository;
 
-        setUpChart(data, perAuthorSelector, authorsAverageSelector, 'chart-per-author', 'Authors breakdown', 'chart-per-author-wrapper');
-        setUpChart(data, perReviewerSelector, reviewersAverageSelector, 'chart-per-reviewer', 'Reviewers breakdown', 'chart-per-reviewer-wrapper');
-        setUpChart(data, perCodeReviewSelector, codeReviewsAverageSelector, 'chart-per-code-review', 'Code reviews breakdown', 'chart-per-code-review-wrapper');
-        setUpChart(data, perDiscussionSelector, discussionsAverageSelector, 'chart-per-discussion', 'Discussions breakdown', 'chart-per-discussion-wrapper');
-        setUpChart(data, perRepositorySelector, repositoriesAverageSelector, 'chart-per-repository', 'Repositories breakdown', 'chart-per-repository-wrapper');
+        setUpChart(data, perAuthorSelector, authorsAverageSelector, 'chart-per-author', 'Authors breakdown', 'chart-per-author-wrapper', true);
+        setUpChart(data, perReviewerSelector, reviewersAverageSelector, 'chart-per-reviewer', 'Reviewers breakdown', 'chart-per-reviewer-wrapper', true);
+        setUpChart(data, perCodeReviewSelector, codeReviewsAverageSelector, 'chart-per-code-review', 'Code reviews breakdown', 'chart-per-code-review-wrapper', false, true);
+        setUpChart(data, perDiscussionSelector, discussionsAverageSelector, 'chart-per-discussion', 'Discussions breakdown', 'chart-per-discussion-wrapper', true);
+        setUpChart(data, perRepositorySelector, repositoriesAverageSelector, 'chart-per-repository', 'Repositories breakdown', 'chart-per-repository-wrapper', true);
       })
       .catch(function (error) {
         console.error('Error fetching data: ', error);
